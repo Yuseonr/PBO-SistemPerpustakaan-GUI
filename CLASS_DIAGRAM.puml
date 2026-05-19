@@ -1,0 +1,198 @@
+@startuml SystemPerpustakaan_ClassDiagram
+'!define ARROWCOLOR #FF6B6B
+title Sistem Perpustakaan - Class Diagram (Kelas Penting)
+
+enum Role {
+  MEMBER
+  LIBRARIAN
+  ADMIN
+}
+
+enum BookCopyStatus {
+  AVAILABLE
+  RESERVED
+  LOANED
+  UNAVAILABLE
+}
+
+enum LoanStatus {
+  REQUESTED
+  WAITING_PICKUP
+  ACTIVE
+  RETURNED
+  CANCELLED
+  EXPIRED
+  OVERDUE
+}
+
+enum BorrowType {
+  ONLINE
+  OFFLINE
+}
+
+' ============ USER HIERARCHY ============
+abstract class User {
+  - id: int
+  - name: String
+  - email: String
+  - passwordHash: String
+  - role: Role
+  - active: boolean
+  - createdAt: LocalDateTime
+  --
+  + isActive(): boolean
+  + getRole(): Role
+  + verifyPassword(password: String): boolean
+}
+
+class Member extends User {
+  - membershipNumber: String
+  - address: String
+  - phone: String
+  - status: String
+  --
+  + searchBooks(criteria: SearchCriteria): List<BookTitle>
+  + getActiveLoanTransactions(): List<LoanTransaction>
+  + getBorrowHistory(): List<LoanTransaction>
+}
+
+class Librarian extends User {
+  - employeeNumber: String
+  - shiftInfo: String
+  --
+  + getActiveLoanTransactions(): List<LoanTransaction>
+}
+
+class Admin extends User {
+  --
+  + createLibrarian(librarian: Librarian): void
+  + updateMember(member: Member): void
+  + resetPassword(user: User, newPassword: String): void
+  + getSystemStatistics(): Statistics
+}
+
+' ============ CATALOG ============
+class Category {
+  - id: int
+  - name: String
+  - description: String
+  - isActive: boolean
+  - createdAt: LocalDateTime
+  - updatedAt: LocalDateTime
+  --
+  + getDisplayLabel(): String
+}
+
+class BookTitle {
+  - id: int
+  - title: String
+  - author: String
+  - publisher: String
+  - isbn: String
+  - description: String
+  - coverImagePath: String
+  - categoryId: int
+  --
+  + getDisplayLabel(): String
+  + getTotalCopies(): int
+  + getAvailableCopies(): int
+}
+
+class BookCopy {
+  - id: int
+  - bookTitleId: int
+  - location: String
+  - status: BookCopyStatus
+  --
+  + canBeBorrowed(): boolean
+  + setStatus(newStatus: BookCopyStatus): void
+  + getAvailability(): boolean
+}
+
+' ============ LOAN TRANSACTIONS ============
+class BorrowRequest {
+  - id: int
+  - memberId: int
+  - borrowType: BorrowType
+  - requestDate: LocalDateTime
+  - createdAt: LocalDateTime
+  - overallStatus: String
+  - notes: String
+  --
+  + getAssociatedTransactions(): List<LoanTransaction>
+  + canBeCancelled(): boolean
+}
+
+class LoanTransaction {
+  - id: int
+  - borrowRequestId: int
+  - memberId: int
+  - bookCopyId: int
+  - borrowType: BorrowType
+  - requestDate: LocalDateTime
+  - pickupDate: LocalDateTime
+  - dueDate: LocalDateTime
+  - returnDate: LocalDateTime
+  - status: LoanStatus
+  - fineAmount: BigDecimal
+  - approvedByLibrarianId: int
+  - cancelledAt: LocalDateTime
+  --
+  + isOverdue(): boolean
+  + calculateFine(currentDate: LocalDateTime): BigDecimal
+  + canBeCancelled(): boolean
+  + updateStatus(newStatus: LoanStatus): void
+}
+
+class FinePayment {
+  - id: int
+  - loanTransactionId: int
+  - amount: BigDecimal
+  - paymentDate: LocalDateTime
+  - paymentMethod: String
+  - notes: String
+}
+
+class FineCalculator {
+  --
+  + calculateFine(dueDate: LocalDateTime, returnDate: LocalDateTime, finePerDay: BigDecimal): BigDecimal
+  + isOverdue(dueDate: LocalDateTime, currentDate: LocalDateTime): boolean
+}
+
+' ============ CONFIGURATION ============
+class LibraryConfig {
+  - id: int
+  - finePerDay: BigDecimal
+  - maxBorrowDays: int
+  - onlinePickupLimitDays: int
+  - maxBorrowLimit: int
+  - libraryName: String
+  - libraryDescription: String
+  - libraryLogoPath: String
+  --
+  + getFinePerDay(): BigDecimal
+  + getMaxBorrowDays(): int
+  + getMaxBorrowLimit(): int
+  + updateConfig(key: String, value: String): void
+}
+
+' ============ RELATIONSHIPS ============
+Category "1" o--> "*" BookTitle: aggregates
+BookTitle "1" *--> "*" BookCopy: composes
+BookCopy "1" --> "*" LoanTransaction: recorded in
+
+Member "1" o--> "*" LoanTransaction: aggregates
+Member "1" o--> "*" BorrowRequest: aggregates
+
+BorrowRequest "1" *--> "*" LoanTransaction: composes
+
+Librarian "1" o--> "*" LoanTransaction: approves
+LoanTransaction "1" o--> "*" FinePayment: aggregates
+
+LoanTransaction ..> BorrowType: uses
+BookCopy ..> BookCopyStatus: uses
+LoanTransaction ..> LoanStatus: uses
+FineCalculator ..> LibraryConfig: uses
+FineCalculator ..> LoanTransaction: uses
+
+@enduml
