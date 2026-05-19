@@ -1,0 +1,175 @@
+@startuml SystemPerpustakaan_ClassDiagram
+title Sistem Perpustakaan - Class Diagram (Padat & Mudah Dilacak)
+
+' ============ STYLING ============
+skinparam classAttributeIconSize 0
+skinparam nodesep 50
+skinparam ranksep 60
+skinparam packageStyle rectangle
+
+' ============ ENUMS ============
+package "Enums" {
+  enum Role {
+    MEMBER
+    LIBRARIAN
+    ADMIN
+  }
+  enum BookCopyStatus {
+    AVAILABLE
+    RESERVED
+    LOANED
+  }
+  enum LoanStatus {
+    REQUESTED
+    ACTIVE
+    RETURNED
+    OVERDUE
+  }
+  enum BorrowType {
+    ONLINE
+    OFFLINE
+  }
+  enum BorrowRequestStatus {
+    OPEN
+    ACTIVE
+    CLOSED
+    CANCELLED
+  }
+}
+
+' ============ 1. USERS (POSISI ATAS) ============
+package "Users" {
+  abstract class User {
+    - id: int
+    - name: String
+    - email: String
+    - passwordHash: String
+    - role: Role
+    - active: boolean
+    --
+    + isActive(): boolean
+    + getRole(): Role
+    + getDashboardTitle(): String
+  }
+
+  class Member extends User {
+    - membershipNumber: String
+    - address: String
+    - phone: String
+    - status: String
+    --
+    + isMembershipValid(): boolean
+  }
+
+  class Librarian extends User {
+    - employeeNumber: String
+    - shiftInfo: String
+  }
+
+  class Admin extends User {}
+}
+
+' ============ 2. TRANSACTIONS (POSISI TENGAH) ============
+package "Transactions" {
+  class BorrowRequest {
+    - id: int
+    - borrowType: BorrowType
+    - requestDate: LocalDateTime
+    - overallStatus: BorrowRequestStatus
+    - notes: String
+    --
+    + getAssociatedTransactions(): List<LoanTransaction>
+    + canBeCancelled(): boolean
+  }
+
+  class LoanTransaction {
+    - id: int
+    - borrowType: BorrowType
+    - requestDate: LocalDateTime
+    - pickupDate: LocalDateTime
+    - dueDate: LocalDateTime
+    - returnDate: LocalDateTime
+    - status: LoanStatus
+    - fineAmount: BigDecimal
+    --
+    + isOverdue(): boolean
+    + updateStatus(newStatus: LoanStatus): void
+  }
+
+  class FinePayment {
+    - id: int
+    - amount: BigDecimal
+    - paidAt: LocalDateTime
+  }
+}
+
+' ============ 3. CATALOG (POSISI BAWAH) ============
+package "Catalog" {
+  class Category {
+    - id: int
+    - name: String
+    - description: String
+    - isActive: boolean
+  }
+
+  class BookTitle {
+    - id: int
+    - title: String
+    - author: String
+    - isbn: String
+    - description: String
+    --
+    + getDisplayLabel(): String
+    + matchesKeyword(keyword: String): boolean
+  }
+
+  class BookCopy {
+    - id: int
+    - location: String
+    - status: BookCopyStatus
+    --
+    + canBeBorrowed(): boolean
+  }
+}
+
+' ============ 4. CONFIG & UTILS ============
+package "Configuration" {
+  class LibraryConfig {
+    - finePerDay: BigDecimal
+    - maxBorrowDays: int
+    - libraryName: String
+    --
+    + getFinePerDay(): BigDecimal
+  }
+
+  class FineCalculator {
+    --
+    + calculateFine(): BigDecimal
+    + isOverdue(): boolean
+  }
+}
+
+' ============ RELATIONSHIPS (ALUR TERARAH) ============
+
+' Relasi Users ke Transactions (Menarik elemen transaksi ke tengah)
+Member "1" <-- "*" BorrowRequest : made by
+Member "1" <-- "*" LoanTransaction : owns
+Librarian "1" <-- "*" LoanTransaction : approved by
+Librarian "1" <-- "*" FinePayment : processed by
+
+' Relasi Internal Transactions (Menyamping agar rapi)
+BorrowRequest "1" *--> "*" LoanTransaction : composes
+LoanTransaction "1" o-right-> "*" FinePayment : aggregates
+
+' Relasi Transactions ke Catalog (Menarik katalog ke bawah)
+LoanTransaction "*" --> "1" BookCopy : borrows
+
+' Relasi Internal Catalog (Menyamping agar seimbang)
+BookTitle "1" -left-> "1" Category : belongs to
+BookTitle "1" *--> "*" BookCopy : composes
+
+' Relasi Config
+FineCalculator ..> LibraryConfig : uses
+FineCalculator ..> LoanTransaction : reads
+
+@enduml

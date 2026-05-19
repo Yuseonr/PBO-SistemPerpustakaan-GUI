@@ -1,0 +1,266 @@
+@startuml SystemPerpustakaan_ClassDiagram
+title Sistem Perpustakaan - Class Diagram (Kelas Penting)
+
+' ============ STYLING ============
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam packageStyle rectangle
+
+' ============ ENUMS ============
+package "Enums" {
+  enum Role {
+    MEMBER
+    LIBRARIAN
+    ADMIN
+  }
+  enum BookCopyStatus {
+    AVAILABLE
+    RESERVED
+    LOANED
+    UNAVAILABLE
+  }
+  enum LoanStatus {
+    REQUESTED
+    WAITING_PICKUP
+    ACTIVE
+    RETURNED
+    CANCELLED
+    EXPIRED
+    OVERDUE
+  }
+  enum BorrowType {
+    ONLINE
+    OFFLINE
+  }
+  enum BorrowRequestStatus {
+    OPEN
+    PARTIALLY_ACTIVE
+    ACTIVE
+    CLOSED
+    CANCELLED
+    EXPIRED
+  }
+}
+
+' ============ INTERFACES ============
+package "Interfaces" {
+  interface Auditable {
+    + getCreatedAt(): LocalDateTime
+    + getUpdatedAt(): LocalDateTime
+    + getCreatedBy(): String
+  }
+  interface Searchable {
+    + matchesKeyword(keyword: String): boolean
+  }
+  interface Repository<T, ID> {
+    + save(entity: T): void
+    + update(entity: T): void
+    + delete(id: ID): void
+    + findById(id: ID): T
+    + findAll(): List<T>
+  }
+}
+
+' ============ USERS ============
+package "Users" {
+  abstract class User {
+    - id: int
+    - name: String
+    - email: String
+    - passwordHash: String
+    - role: Role
+    - active: boolean
+    - createdAt: LocalDateTime
+    - updatedAt: LocalDateTime
+    --
+    + isActive(): boolean
+    + getRole(): Role
+    + getDashboardTitle(): String
+    + getPermissions(): List<String>
+  }
+
+  class Member extends User {
+    - membershipNumber: String
+    - address: String
+    - phone: String
+    - status: String
+    --
+    + isMembershipValid(): boolean
+    + getDashboardTitle(): String
+    + getPermissions(): List<String>
+  }
+
+  class Librarian extends User {
+    - employeeNumber: String
+    - shiftInfo: String
+    --
+    + getDashboardTitle(): String
+    + getPermissions(): List<String>
+  }
+
+  class Admin extends User {
+    --
+    + getDashboardTitle(): String
+    + getPermissions(): List<String>
+  }
+}
+
+' ============ CATALOG ============
+package "Catalog" {
+  class Category {
+    - id: int
+    - name: String
+    - description: String
+    - isActive: boolean
+    - createdAt: LocalDateTime
+    - updatedAt: LocalDateTime
+    --
+    + getDisplayLabel(): String
+  }
+
+  class BookTitle {
+    - id: int
+    - title: String
+    - author: String
+    - publisher: String
+    - isbn: String
+    - description: String
+    - coverImagePath: String
+    - category: Category
+    --
+    + getDisplayLabel(): String
+    + matchesKeyword(keyword: String): boolean
+  }
+
+  class BookCopy {
+    - id: int
+    - bookTitle: BookTitle
+    - location: String
+    - status: BookCopyStatus
+    --
+    + canBeBorrowed(): boolean
+  }
+}
+
+' ============ TRANSACTIONS ============
+package "Transactions" {
+  class BorrowRequest {
+    - id: int
+    - member: Member
+    - borrowType: BorrowType
+    - requestDate: LocalDateTime
+    - createdAt: LocalDateTime
+    - overallStatus: BorrowRequestStatus
+    - notes: String
+    --
+    + getAssociatedTransactions(): List<LoanTransaction>
+    + canBeCancelled(): boolean
+  }
+
+  class LoanTransaction {
+    - id: int
+    - borrowRequest: BorrowRequest
+    - member: Member
+    - bookCopy: BookCopy
+    - borrowType: BorrowType
+    - requestDate: LocalDateTime
+    - pickupDate: LocalDateTime
+    - dueDate: LocalDateTime
+    - returnDate: LocalDateTime
+    - status: LoanStatus
+    - fineAmount: BigDecimal
+    - finePerDaySnapshot: BigDecimal
+    - fineCalculatedAt: LocalDateTime
+    - approvedBy: Librarian
+    - cancelledAt: LocalDateTime
+    - createdAt: LocalDateTime
+    - updatedAt: LocalDateTime
+    - createdBy: String
+    --
+    + isOverdue(): boolean
+    + canBeCancelled(): boolean
+    + updateStatus(newStatus: LoanStatus): void
+  }
+
+  class FinePayment {
+    - id: int
+    - loanTransaction: LoanTransaction
+    - amount: BigDecimal
+    - paidAt: LocalDateTime
+    - processedBy: Librarian
+  }
+
+  class FineCalculator {
+    --
+    + calculateFine(dueDate: LocalDateTime, returnDate: LocalDateTime, finePerDay: BigDecimal): BigDecimal
+    + isOverdue(dueDate: LocalDateTime, currentDate: LocalDateTime): boolean
+  }
+}
+
+' ============ CONFIGURATION ============
+package "Configuration" {
+  class LibraryConfig {
+    - id: int
+    - finePerDay: BigDecimal
+    - maxBorrowDays: int
+    - onlinePickupLimitDays: int
+    - maxBorrowLimit: int
+    - libraryName: String
+    - libraryDescription: String
+    - libraryLogoPath: String
+    --
+    + getFinePerDay(): BigDecimal
+    + getMaxBorrowDays(): int
+    + getMaxBorrowLimit(): int
+    + updateConfig(key: String, value: String): void
+  }
+}
+
+' ============ REPOSITORIES ============
+package "Repositories" {
+  class UserRepository
+  class BookTitleRepository
+  class BookCopyRepository
+  class CategoryRepository
+  class LoanRepository
+  class FinePaymentRepository
+  class LibraryConfigRepository
+}
+
+' ============ RELATIONSHIPS ============
+
+' Catalog Relationships
+BookTitle "1" --> "1" Category: belongs to
+BookTitle "1" *--> "*" BookCopy: composes
+
+' Transaction Relationships
+BorrowRequest "1" --> "1" Member: belongs to
+BorrowRequest "1" *--> "*" LoanTransaction: composes
+LoanTransaction "1" --> "1" Member: belongs to
+LoanTransaction "1" --> "1" BookCopy: for
+LoanTransaction "1" --> "0..1" BorrowRequest: from
+LoanTransaction "1" --> "1" Librarian: approved by
+LoanTransaction "1" o--> "*" FinePayment: aggregates
+FinePayment "1" --> "1" Librarian: processed by
+
+' Utility & Config Relationships
+FineCalculator ..> LibraryConfig: uses
+FineCalculator ..> LoanTransaction: uses
+
+' Interface Realizations
+User ..|> Auditable
+LoanTransaction ..|> Auditable
+BookTitle ..|> Searchable
+Member ..|> Searchable
+
+UserRepository ..|> Repository
+BookTitleRepository ..|> Repository
+BookCopyRepository ..|> Repository
+CategoryRepository ..|> Repository
+LoanRepository ..|> Repository
+FinePaymentRepository ..|> Repository
+LibraryConfigRepository ..|> Repository
+
+@enduml
