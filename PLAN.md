@@ -92,7 +92,7 @@ Field tambahan:
 - `membershipNumber`
 - `address`
 - `phone`
-- `status`
+- `status` : `ACTIVE`, `SUSPENDED`
 
 Method internal (hanya beroperasi pada state sendiri):
 

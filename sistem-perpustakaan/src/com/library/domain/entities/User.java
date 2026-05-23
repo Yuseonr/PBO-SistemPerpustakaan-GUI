@@ -15,6 +15,7 @@ import com.library.domain.interfaces.IAuditable;
  * @author rafianandra
  */
 public abstract class User implements IAuditable {
+    
     // Atribut dasar untuk User
     private Integer id; // dipilih Integer agar bisa null sebelum disimpan ke repository
     private String name;
