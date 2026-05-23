@@ -219,6 +219,8 @@ Kenapa status menempel ke `BookCopy`:
 - satu fisik hanya bisa berada di satu status pada satu waktu;
 - aturan lock, pickup, dan return jadi lebih aman.
 
+Catatan status `RESERVED`: dipasang saat transaksi masuk status `REQUESTED` (hard reservation).
+
 ## 6. Model Transaksi Peminjaman
 
 ### 6.1 LoanTransaction
@@ -233,8 +235,8 @@ Field penting:
 - `borrowRequest` — object reference ke `BorrowRequest` (nullable untuk pinjam offline)
 - `borrowType` : `ONLINE` atau `OFFLINE`
 - `requestDate` : tanggal permintaan pinjam
-- `pickupDate` : tanggal pengambilan buku oleh member
-- `dueDate` : tanggal jatuh tempo pengembalian; dihitung oleh `LoanService` dari `pickupDate + LibraryConfig.maxBorrowDays` pada saat konfirmasi pickup
+- `scheduledPickupDate` : tanggal yang dipilih member saat memesan; sekaligus tanggal aktual pickup karena member harus datang tepat di hari itu
+- `dueDate` : tanggal jatuh tempo pengembalian; dihitung oleh `LoanService` dari `scheduledPickupDate + LibraryConfig.maxBorrowDays` sejak status `REQUESTED` dibuat
 - `returnDate` : tanggal pengembalian buku
 - `status` : lihat alur di bawah
 - `fineAmount` : snapshot final denda; hanya diset oleh `FineCalculator` saat transaksi selesai, tidak pernah dihitung ulang
@@ -250,9 +252,10 @@ Alur status:
 
 ```
 REQUESTED -> WAITING_PICKUP -> ACTIVE -> RETURNED
+REQUESTED -> CANCELLED
+             WAITING_PICKUP -> EXPIRED
+             WAITING_PICKUP -> CANCELLED
                                ACTIVE -> OVERDUE -> RETURNED
-                        WAITING_PICKUP -> EXPIRED
-                        WAITING_PICKUP -> CANCELLED
 ```
 
 Status yang disarankan:
@@ -263,7 +266,11 @@ Status yang disarankan:
 - `RETURNED`
 - `CANCELLED`
 - `EXPIRED`
+
+Catatan pembatalan item: pembatalan per item tidak menghasilkan status header baru. Header tetap `OPEN` atau `PARTIALLY_ACTIVE` sampai semua item terselesaikan. Detail pembatalan per item hanya terlihat di level `LoanTransaction` (keputusan Option B).
 - `OVERDUE`
+
+Definisi `REQUESTED`: member sudah memilih tanggal pickup tertentu dan `BookCopy` langsung dikunci menjadi `RESERVED` sejak status ini. Perpindahan `REQUESTED` → `WAITING_PICKUP` dilakukan oleh scheduler ketika `scheduledPickupDate` = hari ini.
 
 Catatan status `OVERDUE`: status ini disimpan secara eksplisit di database. Perpindahan dari `ACTIVE` ke `OVERDUE` dilakukan oleh background scheduler (lihat Bagian 8.4) yang berjalan periodik untuk mengecek semua transaksi `ACTIVE` yang sudah melewati `dueDate`. Tanpa scheduler yang berjalan, status tidak akan terupdate otomatis — ini adalah konsekuensi yang harus diperhatikan saat implementasi.
 
@@ -357,9 +364,13 @@ Field:
 - `maxBorrowDays`
 - `onlinePickupLimitDays`
 - `maxBorrowLimit`
+- `maxReservationDaysAhead`
+- `pickupWindowDays`
 - `libraryName`
 - `libraryDescription`
 - `libraryLogoPath`
+
+Catatan: `maxReservationDaysAhead` dan `pickupWindowDays` disimpan di `LibraryConfig` agar semua kebijakan perpustakaan bisa diubah admin tanpa edit source code.
 
 ### 7.2 FineCalculator
 
@@ -468,13 +479,22 @@ Tugas:
 
 - membuat permintaan pinjam online;
 - membuat pinjaman offline;
-- memverifikasi pickup dan menghitung `dueDate = pickupDate + LibraryConfig.maxBorrowDays`;
+- memverifikasi pickup dan mengubah transaksi menjadi `ACTIVE` tanpa menghitung ulang `dueDate`;
 - mengubah pinjaman menjadi `ACTIVE`;
 - memproses pengembalian;
 - memanggil `FineCalculator` untuk menghitung dan menyimpan snapshot denda;
 - membatalkan pinjaman yang belum diambil;
 - meng-expire pinjaman yang tidak diambil;
-- menyediakan method yang dipanggil oleh scheduler untuk mengupdate status `ACTIVE` → `OVERDUE` bagi transaksi yang sudah melewati `dueDate`.
+- menyediakan method yang dipanggil oleh scheduler untuk:
+    - mengupdate status `REQUESTED` → `WAITING_PICKUP` saat `scheduledPickupDate` = hari ini;
+    - mengupdate status `WAITING_PICKUP` → `EXPIRED` setelah melewati `pickupWindowDays`;
+    - mengupdate status `ACTIVE` → `OVERDUE` bagi transaksi yang sudah melewati `dueDate`.
+
+Validasi tambahan untuk pinjam online:
+
+- tanggal yang dipilih minimal besok (tidak boleh hari ini atau masa lalu);
+- tanggal yang dipilih maksimal hari ini + `LibraryConfig.maxReservationDaysAhead`;
+- harus ada `BookCopy` berstatus `AVAILABLE` saat pesanan dibuat.
 
 Catatan scheduler: perpindahan status `ACTIVE` ke `OVERDUE` tidak terjadi otomatis tanpa scheduler yang berjalan. Implementasi scheduler dapat menggunakan `java.util.Timer`, `ScheduledExecutorService`, atau mekanisme cron eksternal yang memanggil method di `LoanService` secara periodik (misalnya setiap jam atau setiap hari saat aplikasi aktif).
 
@@ -610,17 +630,18 @@ Jenis relasi yang paling sesuai:
 1. Member klik pinjam dari detail buku.
 2. UI membuka form dengan tanggal pinjam.
 3. `LoanService` mengecek stok, quota (dari `LibraryConfig.maxBorrowLimit`), dan aturan tanggal.
-4. Jika valid, sistem membuat `BorrowRequest` dan `LoanTransaction` berstatus `WAITING_PICKUP`.
-5. `BookCopy` berubah menjadi `RESERVED`.
-6. Member datang pada hari H untuk konfirmasi pickup.
-7. Librarian mengubah transaksi menjadi `ACTIVE` dan `LoanService` menghitung `dueDate = pickupDate + LibraryConfig.maxBorrowDays`.
+4. Jika valid, sistem membuat `BorrowRequest` dan `LoanTransaction` berstatus `REQUESTED`.
+5. `BookCopy` langsung berubah menjadi `RESERVED`.
+6. Scheduler mengubah `REQUESTED` → `WAITING_PICKUP` saat `scheduledPickupDate` = hari ini.
+7. Member punya 1 hari sejak masuk `WAITING_PICKUP` untuk datang.
+8. Librarian mengubah transaksi menjadi `ACTIVE` tanpa menghitung ulang `dueDate`.
 
 ### 13.6 Pinjam Buku Offline
 
 1. Member datang langsung ke perpustakaan.
 2. Librarian memilih buku dan member.
 3. `LoanService` membuat `LoanTransaction` baru dengan status `ACTIVE`.
-4. `LoanService` menghitung `dueDate = pickupDate + LibraryConfig.maxBorrowDays`.
+4. `LoanService` menghitung `dueDate = scheduledPickupDate + LibraryConfig.maxBorrowDays` (untuk offline, `scheduledPickupDate` = hari ini).
 5. `BookCopy` langsung tidak tersedia.
 
 ### 13.7 Pembatalan Pinjaman Online
@@ -637,7 +658,7 @@ Jenis relasi yang paling sesuai:
 2. Librarian membuka daftar pinjaman `WAITING_PICKUP`.
 3. Setelah verifikasi, `LoanService.confirmPickup()` dipanggil oleh pustakawan melalui UI.
 4. Status transaksi diubah menjadi `ACTIVE`.
-5. `dueDate` dihitung dari `pickupDate + LibraryConfig.maxBorrowDays`.
+5. `dueDate` sudah dihitung sejak `REQUESTED` dibuat dengan formula `scheduledPickupDate + LibraryConfig.maxBorrowDays`.
 6. Field `approvedBy` diisi dengan referensi `Librarian` yang memverifikasi.
 
 ### 13.9 Pengembalian Buku
@@ -654,7 +675,10 @@ Jenis relasi yang paling sesuai:
 ### 13.10 Expired dan Overdue
 
 1. Jika pinjaman online tidak diambil melewati batas waktu, status menjadi `EXPIRED`.
-2. Scheduler yang berjalan periodik memanggil method di `LoanService` untuk mengecek semua transaksi `ACTIVE` yang sudah melewati `dueDate`.
+2. Scheduler yang berjalan periodik memanggil method di `LoanService` untuk:
+    - mengubah `REQUESTED` → `WAITING_PICKUP` saat `scheduledPickupDate` = hari ini;
+    - mengubah `WAITING_PICKUP` → `EXPIRED` setelah melewati `pickupWindowDays`;
+    - mengecek semua transaksi `ACTIVE` yang sudah melewati `dueDate`.
 3. Transaksi yang melewati `dueDate` diupdate menjadi `OVERDUE`.
 4. Denda dihitung estimasinya dari konfigurasi dan snapshot tersimpan saat pengembalian akhirnya terjadi.
 

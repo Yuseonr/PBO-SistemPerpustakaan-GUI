@@ -24,3 +24,11 @@ The Repository<T, ID> interface, however, is an infrastructure contract. It dict
 # ENUMS
 on writting enums first word must contains what its use about
 so change from Role to UserRole
+
+
+# Penambahan batasan dan logika reservasi 
+Because of the reservasion issue we decide to make the reservasion maks of 3 days ahead
+say today is 11 then u could borrow it either on 12, 13, or 14
+and on those 12, 13, or 14 the book cannot be reserved by other people 
+and in the date you chose you have 1 day, before it automaticlly get cancled because no one picked it up
+the count down on how long the duedate is based on your chosing
