@@ -12,7 +12,7 @@ package com.library.domain.interfaces;
  * @author rafianandra
  */
 public interface ISearchable {
-    
+
     // Mengambil keyword pencarian untuk semua field relvan agar bisa cek ada ngga nya keyword di object
     public boolean matchesKeyword(String keyword);
 }
