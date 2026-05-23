@@ -150,7 +150,7 @@ Behavior utama:
 
 ### 5.0 Category (Tambahan)
 
-`Category` adalah daftar kategori buku yang dikelola oleh pustakawan.
+`Category` adalah daftar kategori buku yang dikelola oleh pustakawan, mengimplementasikan `auditable`.
 
 Field:
 
@@ -160,6 +160,7 @@ Field:
 - `isActive`
 - `createdAt`
 - `updatedAt`
+- `createdBy`
 
 Tujuan utama:
 
