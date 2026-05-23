@@ -132,9 +132,9 @@ public class CategoryService {
     }
 
     // Method untuk memeriksa izin akses berdasarkan peran pengguna untuk menggunakan fitur manajemen kategori
-    public void checkPermission(User actor) {
+    private void checkPermission(User actor) {
         if (actor.getPermissions().contains("CRUD_CATEGORY") == false) {
-            throw new IllegalStateException("Akses ditolak: Anda tidak memiliki izin untuk mengelola kategori.");
+            throw new SecurityException("Akses ditolak: Anda tidak memiliki izin untuk mengelola kategori.");
         }
         
     }
