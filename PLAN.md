@@ -122,6 +122,7 @@ Catatan: method seperti `confirmPickup()` atau `confirmReturn()` **tidak** ada d
 Behavior utama:
 
 - CRUD buku
+- CRUD kategori
 - konfirmasi pickup pinjaman
 - konfirmasi pengembalian
 - konfirmasi pengembalian yang overdue dan perlu membayar denda
