@@ -26,23 +26,23 @@ import java.util.List;
 
 public class UserRepositoryMySQLImpl implements IUserRepository {
 
-    // Implementasi metode save untuk menyimpan User ke database MySQL pada tabel
-    // "users"
+    // Implementasi metode save untuk menyimpan User ke database MySQL pada tabel "users"
     @Override
     public void save(User entity) {
         String sql = "INSERT INTO users (name, email, password_hash, role, active, "
                 + "membership_number, address, phone_number, member_status, "
-                + "employee_number, shift_info) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "employee_number, shift_info, created_by) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, entity.getName());
             stmt.setString(2, entity.getEmail());
             stmt.setString(3, entity.getPasswordHash());
             stmt.setString(4, entity.getRole().name());
             stmt.setBoolean(5, entity.isActive());
+            stmt.setString(12, entity.getCreatedBy());
 
             if (entity instanceof Member) {
                 Member member = (Member) entity;
