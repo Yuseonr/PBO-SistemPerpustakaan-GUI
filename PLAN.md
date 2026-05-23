@@ -480,9 +480,6 @@ Keuntungan generik:
 Repository yang disarankan (semua mengimplementasikan `Repository<T, ID>`):
 
 - `UserRepository`
-- `MemberRepository`
-- `LibrarianRepository`
-- `AdminRepository`
 - `CategoryRepository`
 - `BookTitleRepository`
 - `BookCopyRepository` — menyediakan method tambahan `countByCopyStatus(BookTitle, BookCopyStatus)` untuk keperluan `BookService`
