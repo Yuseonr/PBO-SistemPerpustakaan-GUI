@@ -22,7 +22,7 @@ public interface IRepository<T, ID> {
     // Cari data di repository berdasarkan ID single 
     T findById(ID id);
 
-    // Cari semua data di repository
+    // return semua data di repository
     java.util.List<T> findAll();
 }
 
