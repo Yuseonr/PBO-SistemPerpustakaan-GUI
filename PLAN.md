@@ -232,7 +232,6 @@ Field penting:
 - `id`
 - `member` — object reference ke `Member`
 - `bookCopy` — object reference ke `BookCopy`
-- `borrowRequest` — object reference ke `BorrowRequest` (nullable untuk pinjam offline)
 - `borrowType` : `ONLINE` atau `OFFLINE`
 - `requestDate` : tanggal permintaan pinjam
 - `scheduledPickupDate` : tanggal yang dipilih member saat memesan; sekaligus tanggal aktual pickup karena member harus datang tepat di hari itu
@@ -266,8 +265,6 @@ Status yang disarankan:
 - `RETURNED`
 - `CANCELLED`
 - `EXPIRED`
-
-Catatan pembatalan item: pembatalan per item tidak menghasilkan status header baru. Header tetap `OPEN` atau `PARTIALLY_ACTIVE` sampai semua item terselesaikan. Detail pembatalan per item hanya terlihat di level `LoanTransaction` (keputusan Option B).
 - `OVERDUE`
 
 Definisi `REQUESTED`: member sudah memilih tanggal pickup tertentu dan `BookCopy` langsung dikunci menjadi `RESERVED` sejak status ini. Perpindahan `REQUESTED` → `WAITING_PICKUP` dilakukan oleh scheduler ketika `scheduledPickupDate` = hari ini.
@@ -292,65 +289,6 @@ Desain atomic per buku lebih cocok karena:
 - UI lebih mudah menampilkan detail satu buku yang dipinjam.
 
 Jika satu member meminjam 3 buku, maka sistem membuat 3 transaksi terpisah. Ini lebih baik daripada satu transaksi berisi banyak item, karena penanganan overdue, pengembalian sebagian, dan pembatalan sebagian menjadi lebih sulit jika semua digabung.
-
-### 6.3 Model Header-Detail yang Disarankan
-
-Jika ingin pengelompokan yang lebih rapi di UI, laporan, dan histori, maka implementasi terbaik adalah memakai dua lapis:
-
-- `BorrowRequest` sebagai header.
-- `LoanTransaction` sebagai detail atomic per buku.
-
-#### Fungsi `BorrowRequest`
-
-`BorrowRequest` berisi identitas kejadian pinjam secara umum, bukan aturan buku fisik.
-
-Field yang cocok:
-
-- `id`
-- `member` — object reference ke `Member`
-- `borrowType`
-- `requestDate`
-- `createdAt`
-- `overallStatus` — bertipe enum `BorrowRequestStatus` (bukan String)
-- `notes`
-
-`overallStatus` bertipe `BorrowRequestStatus` dengan nilai:
-
-- `OPEN`
-- `PARTIALLY_ACTIVE`
-- `ACTIVE`
-- `CLOSED`
-- `CANCELLED`
-- `EXPIRED`
-
-#### Fungsi `LoanTransaction`
-
-`LoanTransaction` tetap menjadi entitas utama per buku (lihat Bagian 6.1).
-
-#### Kenapa header-detail lebih cocok
-
-- satu member bisa meminjam beberapa buku dalam satu kunjungan;
-- dashboard member lebih enak menampilkan satu grup peminjaman dengan beberapa item;
-- librarian lebih mudah memverifikasi satu kejadian peminjaman, tetapi tetap memproses item satu per satu;
-- pembatalan bisa terjadi per item tanpa menghapus seluruh kejadian;
-- histori tetap rapi karena ada konteks kelompok dan detail buku.
-
-#### Kenapa header tidak boleh menggantikan atomic per buku
-
-- status tersedia atau tidak tetap milik `BookCopy`;
-- overdue dan denda harus dihitung per copy;
-- pengembalian bisa parsial;
-- pickup online juga sering terjadi per item;
-- kalau satu item gagal, item lain tetap bisa diproses.
-
-#### Kesimpulan implementasi
-
-Yang dipakai bukan header saja dan bukan detail saja, tetapi:
-
-- header untuk grouping dan tampilan,
-- detail untuk aturan bisnis dan status fisik buku.
-
-Dengan model ini, aplikasi tetap sederhana secara logika, tetapi jauh lebih nyaman untuk UI dan reporting.
 
 ## 7. Aturan Denda dan Kebijakan Perpustakaan
 
@@ -477,7 +415,7 @@ Tugas:
 
 Tugas:
 
-- membuat permintaan pinjam online;
+- membuat `LoanTransaction` berstatus `REQUESTED` untuk pinjam online;
 - membuat pinjaman offline;
 - memverifikasi pickup dan mengubah transaksi menjadi `ACTIVE` tanpa menghitung ulang `dueDate`;
 - mengubah pinjaman menjadi `ACTIVE`;
@@ -548,7 +486,7 @@ Repository yang disarankan (semua mengimplementasikan `Repository<T, ID>`):
 - `CategoryRepository`
 - `BookTitleRepository`
 - `BookCopyRepository` — menyediakan method tambahan `countByCopyStatus(BookTitle, BookCopyStatus)` untuk keperluan `BookService`
-- `LoanRepository`
+- `LoanTransactionRepository`
 - `FinePaymentRepository`
 - `LibraryConfigRepository`
 
@@ -575,8 +513,7 @@ Relasi yang disarankan:
 - `LoanTransaction` mengimplementasikan `Auditable`.
 - `BookTitle` memiliki referensi object `Category`.
 - `BookTitle` memiliki banyak `BookCopy` (dikelola via `BookCopyRepository`, bukan sebagai field koleksi di `BookTitle`).
-- `BorrowRequest` menyimpan referensi object `Member` (arah relasi: `BorrowRequest → Member`).
-- `LoanTransaction` menyimpan referensi object `Member`, `BookCopy`, `BorrowRequest`, dan `Librarian` (arah relasi: `LoanTransaction → Member`, bukan sebaliknya).
+- `LoanTransaction` menyimpan referensi object `Member`, `BookCopy`, dan `Librarian` (arah relasi: `LoanTransaction → Member`, `LoanTransaction → BookCopy`, `LoanTransaction → Librarian`).
 - `FinePayment` menyimpan referensi object `LoanTransaction` dan `Librarian`.
 - `LoanService` bergantung pada repository dan `FineCalculator`.
 - `ReportService` bergantung pada repository untuk agregasi data.
@@ -630,7 +567,7 @@ Jenis relasi yang paling sesuai:
 1. Member klik pinjam dari detail buku.
 2. UI membuka form dengan tanggal pinjam.
 3. `LoanService` mengecek stok, quota (dari `LibraryConfig.maxBorrowLimit`), dan aturan tanggal.
-4. Jika valid, sistem membuat `BorrowRequest` dan `LoanTransaction` berstatus `REQUESTED`.
+4. Jika valid, sistem membuat `LoanTransaction` berstatus `REQUESTED`.
 5. `BookCopy` langsung berubah menjadi `RESERVED`.
 6. Scheduler mengubah `REQUESTED` → `WAITING_PICKUP` saat `scheduledPickupDate` = hari ini.
 7. Member punya 1 hari sejak masuk `WAITING_PICKUP` untuk datang.
@@ -790,7 +727,7 @@ Perubahan yang paling penting:
 - gunakan model atomic per book copy, bukan satu transaksi gabungan banyak buku;
 - pisahkan katalog judul dan stok fisik;
 - pindahkan semua aturan bisnis ke service layer; domain class hanya boleh menyimpan state dan method internal;
-- gunakan enum untuk status dan role, termasuk `BorrowRequestStatus`;
+- gunakan enum untuk status dan role;
 - simpan password dalam bentuk hash; verifikasi password dilakukan di `AuthService` menggunakan `PasswordHasher`, bukan di class `User`;
 - gunakan object reference antar class domain, bukan integer foreign key;
 - tambahkan histori status jika ingin audit yang lebih kuat;
@@ -831,7 +768,7 @@ Supaya sistem lebih matang, class berikut sebaiknya ada:
 - buat interface `Auditable` dan `Searchable`;
 - buat `BookTitle` dan `BookCopy`;
 - buat `LoanTransaction`, `LibraryConfig`, dan `FinePayment`;
-- buat enum `Role`, `BookCopyStatus`, `LoanStatus`, `BorrowType`, `BorrowRequestStatus`.
+- buat enum `Role`, `BookCopyStatus`, `LoanStatus`, `BorrowType`.
 
 ### Tahap 3 - Desain Relasi dan Enum
 
@@ -903,7 +840,7 @@ Supaya sistem lebih matang, class berikut sebaiknya ada:
 3. User mencari buku menggunakan keyword; `BookTitle.matchesKeyword()` digunakan dalam proses filter.
 4. User membuka detail buku.
 5. User memilih pinjam online.
-6. `LoanService` membuat `BorrowRequest` dan `LoanTransaction` berstatus `WAITING_PICKUP`.
+6. `LoanService` membuat `LoanTransaction` berstatus `REQUESTED`.
 7. User datang ke perpustakaan pada hari H.
 8. Librarian memanggil `LoanService.confirmPickup()`; status menjadi `ACTIVE` dan `dueDate` dihitung.
 9. Setelah selesai masa pinjam, user mengembalikan buku.
@@ -964,7 +901,7 @@ Setelah PLAN ini dijalankan, hasil yang diharapkan adalah:
 - Letakkan akses data di repository layer dengan interface generik `Repository<T, ID>`.
 - Implementasikan interface `Auditable` dan `Searchable` untuk memenuhi materi PBO05.
 - Status `OVERDUE` disimpan eksplisit, diupdate oleh scheduler periodik.
-- `overallStatus` di `BorrowRequest` bertipe enum `BorrowRequestStatus`.
+- Tidak ada class `BorrowRequest`. Setiap peminjaman langsung melahirkan satu `LoanTransaction` yang berdiri sendiri — 1 `BookCopy` = 1 `LoanTransaction`, tanpa header pengelompokan.
 - `FinePayment` menyimpan referensi `Librarian` di field `processedBy`.
 - Gunakan enum, exception, koleksi, generik, dan modularisasi secara aktif.
 
