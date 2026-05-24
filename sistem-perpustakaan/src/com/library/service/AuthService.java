@@ -25,6 +25,17 @@ public class AuthService {
 
     // Methode untuk registrasi member baru
     public void registerMember(String name, String email, String plainPassword, String membershipNumber, String address, String phoneNumber) {
+
+        // Vlidasi
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nama tidak boleh kosong.");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email tidak boleh kosong.");
+        }
+        if (plainPassword == null || plainPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password tidak boleh kosong.");
+        }
         
         // Apakah ada user dengan email yang sama?
         User existingUser = userRepository.findByEmail(email);
