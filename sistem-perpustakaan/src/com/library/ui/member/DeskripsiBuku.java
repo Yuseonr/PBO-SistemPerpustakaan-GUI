@@ -2,9 +2,21 @@ package com.library.ui.member;
 
 import com.library.domain.entities.BookTitle;
 import com.library.domain.entities.BookCopy;
+import com.library.domain.entities.LibraryConfig;
+import com.library.domain.entities.Member;
+import com.library.domain.entities.User;
+import com.library.domain.enums.BookCopyStatus;
+import com.library.domain.enums.UserRole;
 import com.library.repository.IBookCopyRepository;
 import com.library.repository.BookCopyRepositoryMySQLImpl;
+import com.library.repository.ILibraryConfigRepository;
+import com.library.repository.ILoanTransactionRepository;
+import com.library.repository.LibraryConfigRepositoryMySQLImpl;
+import com.library.repository.LoanTransactionRepositoryMySQLImpl;
+import com.library.service.LoanService;
+import java.time.LocalDate;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,6 +33,7 @@ public class DeskripsiBuku extends javax.swing.JFrame {
             .getLogger(DeskripsiBuku.class.getName());
     private BookTitle bookTitle;
     private int availableStock;
+    private User loggedInUser;
 
     /**
      * Creates new form MemberDashboard
@@ -29,10 +42,11 @@ public class DeskripsiBuku extends javax.swing.JFrame {
         initComponents();
     }
 
-    public DeskripsiBuku(BookTitle bookTitle, int availableStock) {
+    public DeskripsiBuku(BookTitle bookTitle, int availableStock, User loggedInUser) {
         initComponents();
         this.bookTitle = bookTitle;
         this.availableStock = availableStock;
+        this.loggedInUser = loggedInUser;
 
         // Isi data buku ke komponen GUI
         jLabelJudul.setText(bookTitle.getTitle());
@@ -312,7 +326,8 @@ public class DeskripsiBuku extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonBackActionPerformed
-        // TODO add your handling code here:
+        new KatalogBuku(loggedInUser).setVisible(true);
+        this.dispose();
     }// GEN-LAST:event_jButtonBackActionPerformed
 
     private void jTextFieldTanggalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextFieldTanggalActionPerformed
@@ -320,8 +335,64 @@ public class DeskripsiBuku extends javax.swing.JFrame {
     }// GEN-LAST:event_jTextFieldTanggalActionPerformed
 
     private void jButtonPinjamActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonPinjamActionPerformed
-        new KatalogBuku().setVisible(true);
-        this.dispose();
+        // 1. Cek apakah yang login adalah MEMBER
+        if (!(loggedInUser.getRole().equals(UserRole.MEMBER))) {
+            JOptionPane.showMessageDialog(this, "Hanya Member yang dapat meminjam buku online.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. Cek stok
+        if (availableStock <= 0) {
+            JOptionPane.showMessageDialog(this, "Mohon maaf, stok buku sedang habis.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            // 3. Inisialisasi Service Peminjaman
+            IBookCopyRepository copyRepo = new BookCopyRepositoryMySQLImpl();
+            ILoanTransactionRepository loanRepo = new LoanTransactionRepositoryMySQLImpl();
+            ILibraryConfigRepository configRepo = new LibraryConfigRepositoryMySQLImpl();
+
+            // Ambil config default (id 1)
+            LibraryConfig config = configRepo.findById(1); 
+            LoanService loanService = new LoanService(loanRepo, copyRepo, config);
+
+            // 4. Cari satu buku fisik (BookCopy) yang AVAILABLE
+            List<BookCopy> allCopies = copyRepo.findByBookTitleId(bookTitle.getId());
+            BookCopy availableCopy = allCopies.stream()
+                    .filter(c -> c.getStatus() == BookCopyStatus.AVAILABLE)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Stok tidak sinkron."));
+
+            // 5. Tentukan tanggal ambil (besok)
+            String tglInput = jTextFieldTanggal.getText().trim();
+            if (tglInput.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Silakan masukkan tanggal pengambilan (Format: YYYY-MM-DD).", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            LocalDate pickupDate;
+            try {
+                pickupDate = LocalDate.parse(tglInput);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Format tanggal salah. Harap gunakan format YYYY-MM-DD (Contoh: 2026-05-26).", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 6. Lakukan peminjaman online
+            loanService.requestOnlineLoan((Member) loggedInUser, availableCopy, pickupDate);
+
+            // 7. Berhasil! Tampilkan pesan dan update UI stok
+            JOptionPane.showMessageDialog(this, 
+                "Berhasil! Silakan ambil buku di perpustakaan pada tanggal " + pickupDate + ".\nBatas waktu peminjaman adalah " + config.getMaxBorrowDays() + " hari.", 
+                "Pinjam Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            // Kembali ke katalog untuk me-refresh data
+            new KatalogBuku(loggedInUser).setVisible(true);
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Gagal Meminjam", JOptionPane.ERROR_MESSAGE);
+        }
     }// GEN-LAST:event_jButtonPinjamActionPerformed
 
     /**
