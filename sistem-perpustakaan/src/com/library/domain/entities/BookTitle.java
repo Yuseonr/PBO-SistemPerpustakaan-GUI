@@ -25,6 +25,14 @@ public class BookTitle implements ISearchable{
     // Konstruktor tanpa parameter
     protected BookTitle() {}
 
+    // Konstruktor dengan id, title, author, category
+    public BookTitle(Integer id, String title, String author, Category category) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.category = category;
+    }
+
     // Konstruktor dengan parameter
     public BookTitle(String title, String author, String publisher, String isbn, String description, Category category) {
         this.id = null; // ID akan di-set oleh repository saat disimpan

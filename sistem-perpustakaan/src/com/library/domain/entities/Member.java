@@ -25,6 +25,12 @@ public class Member extends User {
     // Konstruktor tanpa parameter
     protected Member() { super(); }
 
+    // Konstruktor dengan id dan nama
+    public Member(Integer id, String name) {
+        super(name, null, null, UserRole.MEMBER); 
+        this.setId(id);
+    }
+
     // Konstruktor dengan parameter
     public Member(String name, String email, String passwordHash, String membershipNumber, String address, String phoneNumber) {
         super(name, email, passwordHash, UserRole.MEMBER); // Role otomatis MEMBER

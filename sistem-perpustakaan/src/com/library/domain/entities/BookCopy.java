@@ -21,6 +21,13 @@ public class BookCopy {
     // Konstruktor tanpa parameter
     protected BookCopy() {}
 
+    // Konstruktor dengan id, location, bookTitle
+    public BookCopy(Integer id, String Location, BookTitle bookTitle) {
+        this.id = id;
+        this.location = Location;
+        this.bookTitle = bookTitle;
+    }
+
     // Konstruktor dengan parameter
     public BookCopy(BookTitle bookTitle, String location) {
         this.bookTitle = bookTitle;

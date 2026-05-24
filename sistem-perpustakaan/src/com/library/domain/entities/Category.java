@@ -28,6 +28,12 @@ public class Category implements IAuditable {
     // Konstruktor tanpa parameter
     protected Category() {}
 
+    // Konstruktor dengan id dan nama
+    public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     // Konstruktor yang menerima name, description 
     public Category(String name, String description) {
         this.name = name;
