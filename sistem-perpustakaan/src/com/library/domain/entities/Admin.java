@@ -36,8 +36,8 @@ public class Admin extends User {
             "RESET_PASSWORD",
             "MANAGE_CONFIG",
             "VIEW_STATISTICS",
-            "VIEW_ALL_LOANS"
-        );
+            "VIEW_ALL_LOANS",
+            "MANAGE_USER"
+        ); 
     }
-    
 }

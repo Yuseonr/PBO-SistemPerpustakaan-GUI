@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Implementasi Repositori untuk Konfigurasi Perpustakaan.
  * Memastikan database hanya membaca dan memperbarui baris ID = 1.
- * * @author rafianandra
+ * @author rafianandra
  */
 public class LibraryConfigRepositoryMySQLImpl implements ILibraryConfigRepository {
 
