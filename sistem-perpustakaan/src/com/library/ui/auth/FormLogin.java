@@ -223,9 +223,9 @@ public class FormLogin extends javax.swing.JFrame {
                     "Sukses", JOptionPane.INFORMATION_MESSAGE);
             // 5. TODO: Buka dashboard sesuai role, lalu tutup form login
             if (loggedInUser.getRole().equals(UserRole.MEMBER)) {
-                new KatalogBuku().setVisible(true);
+                new KatalogBuku(loggedInUser).setVisible(true);
             } else if (loggedInUser.getRole().equals(UserRole.LIBRARIAN)) {
-                new DashboardLibrarian().setVisible(true);
+                new DashboardLibrarian(loggedInUser).setVisible(true);
             } else if (loggedInUser.getRole().equals(UserRole.ADMIN)) {
                 new AdminDashboardForm().setVisible(true);
             } else {
