@@ -42,31 +42,31 @@ public class ManajemenAkun extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jPasswordField2 = new javax.swing.JPasswordField();
         jButton5 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jPanelNewPass = new javax.swing.JPanel();
+        jScrollPaneTabel = new javax.swing.JScrollPane();
+        jTableLibrarian = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jLabelNoHP = new javax.swing.JLabel();
+        jLabelEmail = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        jLabelActive = new javax.swing.JLabel();
+        jTextFieldNama = new javax.swing.JTextField();
+        jTextFieldEmail = new javax.swing.JTextField();
+        jTextFieldNoHP = new javax.swing.JTextField();
+        jTextFieldActive = new javax.swing.JTextField();
+        jTextFieldRole = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jLabelPassword = new javax.swing.JLabel();
+        jPasswordFieldPassword = new javax.swing.JPasswordField();
+        jLabelSubJudul = new javax.swing.JLabel();
+        jLabelID = new javax.swing.JLabel();
         jLabelLog = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        jTextFieldNewPass = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
+        jTextFieldID = new javax.swing.JTextField();
+        jButtonKonfirmasi = new javax.swing.JButton();
         jLabelResetLog = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -201,10 +201,10 @@ public class ManajemenAkun extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Member", jPanel2);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(960, 310));
+        jScrollPaneTabel.setPreferredSize(new java.awt.Dimension(960, 310));
 
-        jTable1.setFont(new java.awt.Font("Sylfaen", 0, 13)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableLibrarian.setFont(new java.awt.Font("Sylfaen", 0, 13)); // NOI18N
+        jTableLibrarian.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -212,66 +212,65 @@ public class ManajemenAkun extends javax.swing.JFrame {
                 "No", "ID Pegawai", "Nama", "E-mail", "No. HP", "Role", "Status"
             }
         ));
-        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(300);
-            jTable1.getColumnModel().getColumn(2).setPreferredWidth(300);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(350);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(200);
-            jTable1.getColumnModel().getColumn(5).setPreferredWidth(100);
-            jTable1.getColumnModel().getColumn(6).setPreferredWidth(200);
+        jTableLibrarian.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jScrollPaneTabel.setViewportView(jTableLibrarian);
+        if (jTableLibrarian.getColumnModel().getColumnCount() > 0) {
+            jTableLibrarian.getColumnModel().getColumn(0).setPreferredWidth(50);
+            jTableLibrarian.getColumnModel().getColumn(1).setPreferredWidth(300);
+            jTableLibrarian.getColumnModel().getColumn(2).setPreferredWidth(300);
+            jTableLibrarian.getColumnModel().getColumn(3).setPreferredWidth(350);
+            jTableLibrarian.getColumnModel().getColumn(4).setPreferredWidth(200);
+            jTableLibrarian.getColumnModel().getColumn(5).setPreferredWidth(100);
+            jTableLibrarian.getColumnModel().getColumn(6).setPreferredWidth(200);
         }
 
         jLabel1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabel1.setText("Nama");
 
-        jLabel2.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jLabel2.setText("No. HP");
+        jLabelNoHP.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jLabelNoHP.setText("No. HP");
 
-        jLabel3.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jLabel3.setText("Email");
+        jLabelEmail.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jLabelEmail.setText("Email");
 
         jLabel4.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabel4.setText("Role");
 
-        jLabel5.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jLabel5.setText("Active");
+        jLabelActive.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jLabelActive.setText("Active");
 
-        jTextField1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField1.setPreferredSize(new java.awt.Dimension(250, 26));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldNama.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldNama.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldNama.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jTextFieldNamaActionPerformed(evt);
             }
         });
 
-        jTextField2.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField2.setPreferredSize(new java.awt.Dimension(250, 26));
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldEmail.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldEmail.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                jTextFieldEmailActionPerformed(evt);
             }
         });
 
-        jTextField3.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField3.setPreferredSize(new java.awt.Dimension(250, 26));
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldNoHP.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldNoHP.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldNoHP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                jTextFieldNoHPActionPerformed(evt);
             }
         });
 
-        jTextField4.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField4.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldActive.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldActive.setPreferredSize(new java.awt.Dimension(250, 26));
 
-        jTextField5.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField5.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldRole.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldRole.setPreferredSize(new java.awt.Dimension(250, 26));
 
         jButton1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jButton1.setText("Tambah");
-        jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -288,80 +287,78 @@ public class ManajemenAkun extends javax.swing.JFrame {
 
         jButton3.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jButton3.setText("Update");
-        jButton3.setContentAreaFilled(false);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jLabel6.setText("Password");
+        jLabelPassword.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jLabelPassword.setText("Password");
 
-        jPasswordField1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jPasswordField1.setPreferredSize(new java.awt.Dimension(250, 26));
+        jPasswordFieldPassword.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jPasswordFieldPassword.setPreferredSize(new java.awt.Dimension(250, 26));
 
-        jLabel7.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
-        jLabel7.setText("Reset password");
+        jLabelSubJudul.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
+        jLabelSubJudul.setText("Reset password");
 
-        jLabel8.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jLabel8.setText("ID Pegawai");
+        jLabelID.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jLabelID.setText("ID Pegawai");
 
         jLabelLog.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabelLog.setPreferredSize(new java.awt.Dimension(400, 24));
 
-        jTextField6.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField6.setPreferredSize(new java.awt.Dimension(250, 26));
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldNewPass.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldNewPass.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldNewPass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                jTextFieldNewPassActionPerformed(evt);
             }
         });
 
         jLabel9.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabel9.setText("New Password");
 
-        jTextField7.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jTextField7.setPreferredSize(new java.awt.Dimension(250, 26));
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldID.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jTextFieldID.setPreferredSize(new java.awt.Dimension(250, 26));
+        jTextFieldID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
+                jTextFieldIDActionPerformed(evt);
             }
         });
 
-        jButton4.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jButton4.setText("Konfirmasi");
-        jButton4.setContentAreaFilled(false);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jButtonKonfirmasi.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jButtonKonfirmasi.setText("Konfirmasi");
+        jButtonKonfirmasi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jButtonKonfirmasiActionPerformed(evt);
             }
         });
 
         jLabelResetLog.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabelResetLog.setPreferredSize(new java.awt.Dimension(400, 20));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelNewPassLayout = new javax.swing.GroupLayout(jPanelNewPass);
+        jPanelNewPass.setLayout(jPanelNewPassLayout);
+        jPanelNewPassLayout.setHorizontalGroup(
+            jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelNewPassLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton4)
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                        .addComponent(jButtonKonfirmasi)
                         .addGap(30, 30, 30)
                         .addComponent(jLabelResetLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
+                    .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                        .addComponent(jLabelID)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFieldID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel7)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jTextFieldNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabelSubJudul)
+                    .addGroup(jPanelNewPassLayout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2)
@@ -369,80 +366,80 @@ public class ManajemenAkun extends javax.swing.JFrame {
                         .addComponent(jButton3)
                         .addGap(18, 18, 18)
                         .addComponent(jLabelLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                        .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabelEmail)
+                            .addComponent(jLabelNoHP))
                         .addGap(23, 23, 23)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                                .addComponent(jTextFieldNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(127, 127, 127)
                                 .addComponent(jLabel4))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                                .addComponent(jTextFieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(127, 127, 127)
-                                .addComponent(jLabel5))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabelActive))
+                            .addGroup(jPanelNewPassLayout.createSequentialGroup()
+                                .addComponent(jTextFieldNoHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(127, 127, 127)
-                                .addComponent(jLabel6)))
+                                .addComponent(jLabelPassword)))
                         .addGap(23, 23, 23)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPasswordFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jTextFieldActive, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextFieldRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        jPanelNewPassLayout.setVerticalGroup(
+            jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelNewPassLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelActive)
+                    .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabelEmail)
+                        .addComponent(jTextFieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFieldActive, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(9, 9, 9)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelNoHP)
+                    .addComponent(jTextFieldNoHP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelPassword)
+                    .addComponent(jPasswordFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jLabelLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
+                .addComponent(jLabelSubJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelID)
+                    .addComponent(jTextFieldNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
+                .addGroup(jPanelNewPassLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonKonfirmasi)
                     .addComponent(jLabelResetLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Librarian", jPanel3);
+        jTabbedPane1.addTab("Librarian", jPanelNewPass);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -472,17 +469,17 @@ public class ManajemenAkun extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jTextFieldNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldNamaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jTextFieldNamaActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void jTextFieldEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldEmailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_jTextFieldEmailActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void jTextFieldNoHPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldNoHPActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_jTextFieldNoHPActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
@@ -496,17 +493,17 @@ public class ManajemenAkun extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void jTextFieldNewPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldNewPassActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }//GEN-LAST:event_jTextFieldNewPassActionPerformed
 
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
+    private void jTextFieldIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldIDActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
+    }//GEN-LAST:event_jTextFieldIDActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButtonKonfirmasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKonfirmasiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jButtonKonfirmasiActionPerformed
 
     private void jPasswordField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField2ActionPerformed
         // TODO add your handling code here:
@@ -541,42 +538,42 @@ public class ManajemenAkun extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonKonfirmasi;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelActive;
+    private javax.swing.JLabel jLabelEmail;
+    private javax.swing.JLabel jLabelID;
     private javax.swing.JLabel jLabelJudul;
     private javax.swing.JLabel jLabelLog;
+    private javax.swing.JLabel jLabelNoHP;
+    private javax.swing.JLabel jLabelPassword;
     private javax.swing.JLabel jLabelResetLog;
+    private javax.swing.JLabel jLabelSubJudul;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JPanel jPanelNewPass;
     private javax.swing.JPasswordField jPasswordField2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPasswordField jPasswordFieldPassword;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneTabel;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTable jTableLibrarian;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField jTextFieldActive;
+    private javax.swing.JTextField jTextFieldEmail;
+    private javax.swing.JTextField jTextFieldID;
+    private javax.swing.JTextField jTextFieldNama;
+    private javax.swing.JTextField jTextFieldNewPass;
+    private javax.swing.JTextField jTextFieldNoHP;
+    private javax.swing.JTextField jTextFieldRole;
     // End of variables declaration//GEN-END:variables
 }
