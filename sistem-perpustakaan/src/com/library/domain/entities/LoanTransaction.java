@@ -31,7 +31,7 @@ public class LoanTransaction implements IAuditable {
     private LocalDate scheduledPickupDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
-    private LocalDate cancelledAt;
+    private LocalDateTime cancelledAt;
     
     // Atribut untuk perhitungan denda
     private Double fineAmount;
@@ -91,7 +91,7 @@ public class LoanTransaction implements IAuditable {
     public LocalDate getScheduledPickupDate() { return scheduledPickupDate; }
     public LocalDate getDueDate() { return dueDate; }
     public LocalDate getReturnDate() { return returnDate; }
-    public LocalDate getCancelledAt() { return cancelledAt; }
+    public LocalDateTime getCancelledAt() { return cancelledAt; }
     public Double getFineAmount() { return fineAmount; }
     public Double getFinePerDaySnapshot() { return finePerDaySnapshot; }
     public LocalDateTime getFineCalculatedAt() { return fineCalculatedAt; }
@@ -107,7 +107,7 @@ public class LoanTransaction implements IAuditable {
     public void setScheduledPickupDate(LocalDate scheduledPickupDate) { this.scheduledPickupDate = scheduledPickupDate; }
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
     public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
-    public void setCancelledAt(LocalDate cancelledAt) { this.cancelledAt = cancelledAt; }
+    public void setCancelledAt(LocalDateTime cancelledAt) { this.cancelledAt = cancelledAt; }
     public void setFineAmount(Double fineAmount) { this.fineAmount = fineAmount; }
     public void setFinePerDaySnapshot(Double finePerDaySnapshot) { this.finePerDaySnapshot = finePerDaySnapshot; }
     public void setFineCalculatedAt(LocalDateTime fineCalculatedAt) { this.fineCalculatedAt = fineCalculatedAt; }

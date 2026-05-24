@@ -34,8 +34,9 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
     // Implementasi metode save untuk menyimpan LoanTransaction ke database MySQL
     @Override
     public void save(LoanTransaction entity) {
-        String sql = "INSERT INTO loans (member_id, book_copy_id, borrow_type, status, request_date, fine_amount) "
-            + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO loans (member_id, book_copy_id, borrow_type, status, request_date, "
+            + "scheduled_pickup_date, due_date, fine_amount, created_by) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -51,10 +52,28 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
                 stmt.setNull(5, java.sql.Types.TIMESTAMP);
             }
 
-            if (entity.getFineAmount() != null) {
-                stmt.setDouble(6, entity.getFineAmount());
+            if (entity.getScheduledPickupDate() != null) {
+                stmt.setDate(6, java.sql.Date.valueOf(entity.getScheduledPickupDate()));
             } else {
-                stmt.setDouble(6, 0.0);
+                stmt.setNull(6, java.sql.Types.DATE);
+            }
+
+            if (entity.getDueDate() != null) {
+                stmt.setDate(7, java.sql.Date.valueOf(entity.getDueDate()));
+            } else {
+                stmt.setNull(7, java.sql.Types.DATE);
+            }
+
+            if (entity.getFineAmount() != null) {
+                stmt.setDouble(8, entity.getFineAmount());
+            } else {
+                stmt.setDouble(8, 0.0);
+            }
+
+            if (entity.getCreatedBy() != null) {
+                stmt.setString(9, entity.getCreatedBy());
+            } else {
+                stmt.setNull(9, java.sql.Types.VARCHAR);
             }
 
             stmt.executeUpdate();
@@ -101,7 +120,7 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
             }
 
             if (entity.getCancelledAt() != null) {
-                stmt.setDate(5, java.sql.Date.valueOf(entity.getCancelledAt()));
+                stmt.setTimestamp(5, Timestamp.valueOf(entity.getCancelledAt()));
             } else {
                 stmt.setNull(5, java.sql.Types.TIMESTAMP);
             }
@@ -357,8 +376,8 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
         if (rs.getDate("return_date") != null) {
             txn.setReturnDate(rs.getDate("return_date").toLocalDate());
         }
-        if (rs.getDate("cancelled_at") != null) {
-            txn.setCancelledAt(rs.getDate("cancelled_at").toLocalDate());
+        if (rs.getTimestamp("cancelled_at") != null) {
+            txn.setCancelledAt(rs.getTimestamp("cancelled_at").toLocalDateTime());
         }
 
         txn.setFineAmount(rs.getDouble("fine_amount"));
