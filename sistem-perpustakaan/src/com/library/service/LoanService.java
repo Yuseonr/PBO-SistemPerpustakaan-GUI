@@ -224,4 +224,27 @@ public class LoanService {
             loanRepo.update(txn);
         }
     }
+
+    public List<LoanTransaction> getMemberLoans(Member member) {
+        return loanRepo.findActiveLoansByMemberId(member.getId()); 
+    }
+
+    // Method untuk mendapatkan seluruh riwayat pinjaman member termasuk yang sudah selesai/batal
+    public List<LoanTransaction> getAllMemberLoans(Member member) {
+        return loanRepo.findByMemberId(member.getId());
+    }
+
+    public List<LoanTransaction> getAllLoans() {
+        return loanRepo.findAll();
+    }
+
+    // Menghitung denda secara dinamis untuk tampilan TUI (sebelum buku benar-benar dikembalikan)
+    public Double calculateCurrentFine(LoanTransaction txn) {
+        if (txn.getStatus() == LoanStatus.OVERDUE && txn.getDueDate() != null) {
+            return FineCalculator.calculateFine(txn.getDueDate(), LocalDate.now(), config.getFinePerDay());
+        } else if (txn.getFineAmount() != null) {
+            return txn.getFineAmount();
+        }
+        return 0.0;
+    }
 }

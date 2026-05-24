@@ -184,6 +184,19 @@ public class BookService {
         return bookCopyRepository.countAvailableByBookTitleId(bookTitleId);
     }
 
+    // Method untuk mencari satu copy fisik buku yang AVAILABLE untuk dipinjam
+    public BookCopy findAvailableCopyByTitleId(Integer bookTitleId) {
+        List<BookCopy> copies = bookCopyRepository.findByBookTitleId(bookTitleId);
+        if (copies != null) {
+            for (BookCopy copy : copies) {
+                if (copy.getStatus() == BookCopyStatus.AVAILABLE) {
+                    return copy;
+                }
+            }
+        }
+        return null;
+    }
+
     // Method untuk mendapatkan jumlah total copy berdasarkan id judul buku
     public int getTotalCopies(Integer bookTitleId) {
         List<BookCopy> copies = bookCopyRepository.findByBookTitleId(bookTitleId);
