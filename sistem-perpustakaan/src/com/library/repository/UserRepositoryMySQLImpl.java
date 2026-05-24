@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,22 +112,105 @@ public class UserRepositoryMySQLImpl implements IUserRepository {
 
     @Override
     public void update(User entity) {
-        throw new UnsupportedOperationException("Belum diimplementasikan.");
+        String sql = "UPDATE users SET name = ?, email = ?, password_hash = ?, active = ?, "
+                + "membership_number = ?, address = ?, phone_number = ?, member_status = ?, "
+                + "employee_number = ?, shift_info = ?, updated_at = NOW() WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, entity.getName());
+            stmt.setString(2, entity.getEmail());
+            stmt.setString(3, entity.getPasswordHash());
+            stmt.setBoolean(4, entity.isActive());
+
+            if (entity instanceof Member) {
+                Member m = (Member) entity;
+                stmt.setString(5, m.getMembershipNumber());
+                stmt.setString(6, m.getAddress());
+                stmt.setString(7, m.getPhoneNumber());
+                stmt.setString(8, m.getStatus().name());
+                stmt.setNull(9, java.sql.Types.VARCHAR);
+                stmt.setNull(10, java.sql.Types.VARCHAR);
+            } else if (entity instanceof Librarian) {
+                Librarian l = (Librarian) entity;
+                stmt.setNull(5, java.sql.Types.VARCHAR);
+                stmt.setNull(6, java.sql.Types.VARCHAR);
+                stmt.setNull(7, java.sql.Types.VARCHAR);
+                stmt.setNull(8, java.sql.Types.VARCHAR);
+                stmt.setString(9, l.getEmployeeNumber());
+                stmt.setString(10, l.getShiftInfo());
+            } else {
+                stmt.setNull(5, java.sql.Types.VARCHAR);
+                stmt.setNull(6, java.sql.Types.VARCHAR);
+                stmt.setNull(7, java.sql.Types.VARCHAR);
+                stmt.setNull(8, java.sql.Types.VARCHAR);
+                stmt.setNull(9, java.sql.Types.VARCHAR);
+                stmt.setNull(10, java.sql.Types.VARCHAR);
+            }
+
+            stmt.setInt(11, entity.getId());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        throw new UnsupportedOperationException("Belum diimplementasikan.");
+        // Soft delete — nonaktifkan akun, tidak hapus data
+        String sql = "UPDATE users SET active = false WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public User findById(Integer id) {
-        throw new UnsupportedOperationException("Belum diimplementasikan.");
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public List<User> findAll() {
-        throw new UnsupportedOperationException("Belum diimplementasikan.");
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE active = true";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                users.add(mapResultSetToUser(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 
     private User mapResultSetToUser(ResultSet rs) throws SQLException {

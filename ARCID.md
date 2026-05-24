@@ -55,3 +55,26 @@ Database MySQL (library_db dan tabel users) siap.
 AuthService mampu mendaftarkan member baru, mengamankan password (hashing), menolak duplikasi email, dan memastikan state active / member_status terjaga.
 
 Proses Login mampu mendeteksi role secara dinamis dan me-return objek subclass yang tepat (Member, Librarian, Admin), membuktikan bahwa polimorfisme Java Anda berjalan sempurna.
+
+
+1. Menghilangkan FinePayment (Melacak Denda via LoanTransaction)
+Ide Anda untuk tidak membuat entitas/tabel FinePayment dan hanya menggunakan WHERE fine_amount > 0 di tabel LoanTransaction adalah taktik penyederhanaan (denormalization) yang sangat wajar dan sering dipakai di industri untuk proyek berskala kecil-menengah.
+
+Bagaimana cara kerjanya jika FinePayment dihapus?
+Jika Anda membuang tabel tersebut, Anda hanya perlu menambahkan dua atribut baru ke dalam entitas LoanTransaction (dan kolomnya di MySQL):
+
+finePaidAt (Tipe: LocalDateTime / SQL: TIMESTAMP): Untuk menandai kapan denda itu lunas dibayar.
+
+fineProcessedBy (Tipe: Librarian / SQL: INT): Untuk mencatat siapa pustakawan yang menerima uang denda tersebut (penting untuk audit agar uang tidak masuk kantong pribadi).
+
+Keuntungan Pendekatan Ini:
+
+Lebih Cepat Selesai: Anda menghemat pembuatan 1 Entitas, 1 Interface Repositori, 1 Impl Repositori, dan 1 Tabel SQL.
+
+Query Lebih Mudah: Untuk mencari denda yang belum dibayar, cukup SELECT * FROM loans WHERE fine_amount > 0 AND fine_paid_at IS NULL. Sangat efisien!
+
+Kerugiannya (Trade-off):
+
+Tidak Mendukung Cicilan (Parsial): Jika denda member adalah Rp10.000, tapi dia baru bawa uang Rp5.000 hari ini, sistem Anda tidak bisa mencatat "pembayaran sebagian" ini. Denda harus dibayar lunas sekaligus dalam satu transaksi.
+
+Kesimpulan: Untuk scope proyek sistem perpustakaan kampus/sekolah seperti ini, menghilangkan FinePayment adalah keputusan yang bijak. Kita akan melebur status pelunasannya langsung ke dalam LoanTransaction.

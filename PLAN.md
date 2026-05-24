@@ -184,7 +184,7 @@ Field:
 - `coverImagePath`
 - `category` — object reference ke `Category`, bukan integer ID
 
-Method:
+Method :
 
 - `getDisplayLabel()`
 - `matchesKeyword(String keyword): boolean` — implementasi dari interface `Searchable`
