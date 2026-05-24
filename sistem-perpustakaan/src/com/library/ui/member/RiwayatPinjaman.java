@@ -29,29 +29,18 @@ public class RiwayatPinjaman extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableRiwayat = new javax.swing.JTable();
-        jButtonTestDump = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButtonKatalog = new javax.swing.JButton();
+        jButtonRiwayat = new javax.swing.JButton();
+        jButtonLogOut = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
+        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
-
-        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
-        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 235, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
-        );
 
         jLabel1.setFont(new java.awt.Font("Sylfaen", 1, 36)); // NOI18N
         jLabel1.setText("Riwayat Peminjaman");
@@ -72,12 +61,64 @@ public class RiwayatPinjaman extends javax.swing.JFrame {
         jTableRiwayat.setPreferredSize(new java.awt.Dimension(900, 600));
         jScrollPane1.setViewportView(jTableRiwayat);
 
-        jButtonTestDump.setText("jButton1");
-        jButtonTestDump.addActionListener(new java.awt.event.ActionListener() {
+        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
+        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
+
+        jButtonKatalog.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKatalog.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKatalog.setText("KATALOG");
+        jButtonKatalog.setBorderPainted(false);
+        jButtonKatalog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonTestDumpActionPerformed(evt);
+                jButtonKatalogActionPerformed(evt);
             }
         });
+
+        jButtonRiwayat.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonRiwayat.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonRiwayat.setText("RIWAYAT");
+        jButtonRiwayat.setBorderPainted(false);
+        jButtonRiwayat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRiwayatActionPerformed(evt);
+            }
+        });
+
+        jButtonLogOut.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonLogOut.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonLogOut.setText("log out");
+        jButtonLogOut.setBorderPainted(false);
+        jButtonLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLogOutActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonRiwayat)
+                    .addComponent(jButtonKatalog)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButtonLogOut)
+                        .addGap(29, 29, 29)))
+                .addContainerGap(49, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(138, 138, 138)
+                .addComponent(jButtonKatalog)
+                .addGap(27, 27, 27)
+                .addComponent(jButtonRiwayat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 415, Short.MAX_VALUE)
+                .addComponent(jButtonLogOut)
+                .addGap(26, 26, 26))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -92,45 +133,35 @@ public class RiwayatPinjaman extends javax.swing.JFrame {
                         .addGap(0, 52, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonTestDump)
-                        .addGap(177, 177, 177))))
+                        .addGap(177, 660, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jButtonTestDump))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonTestDumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTestDumpActionPerformed
-// 1. Ambil model bawaan dari tabel
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableRiwayat.getModel();
-        
-        // 2. Kosongkan isi tabel (supaya kalau diklik berkali-kali datanya tidak dobel)
-        model.setRowCount(0);
-        
-        // 3. Siapkan baris data bohongan (sesuai urutan kolom: No, Judul, Tgl Pinjam, Tgl Max, Status, Denda)
-        Object[] baris1 = {1, "Fundamental Programming", "2026-05-15", "2026-05-22", "RETURNED", "Rp 0"};
-        Object[] baris2 = {2, "Mahir Java Swing", "2026-05-10", "2026-05-17", "OVERDUE", "Rp 15.000"};
-        Object[] baris3 = {3, "Arsitektur Database", "2026-05-23", "2026-05-30", "ACTIVE", "-"};
-        
-        // 4. Masukkan baris-baris tersebut ke dalam model tabel
-        model.addRow(baris1);
-        model.addRow(baris2);
-        model.addRow(baris3);
-    }//GEN-LAST:event_jButtonTestDumpActionPerformed
+    private void jButtonKatalogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKatalogActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonKatalogActionPerformed
+
+    private void jButtonRiwayatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRiwayatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonRiwayatActionPerformed
+
+    private void jButtonLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogOutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonLogOutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -158,7 +189,9 @@ public class RiwayatPinjaman extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonTestDump;
+    private javax.swing.JButton jButtonKatalog;
+    private javax.swing.JButton jButtonLogOut;
+    private javax.swing.JButton jButtonRiwayat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
