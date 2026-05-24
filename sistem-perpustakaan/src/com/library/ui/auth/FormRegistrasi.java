@@ -295,7 +295,8 @@ public class FormRegistrasi extends javax.swing.JFrame {
     }// GEN-LAST:event_jPasswordFieldPasswordActionPerformed
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonLoginActionPerformed
-        // TODO add your handling code here:
+        new FormLogin().setVisible(true);
+        this.dispose();
     }// GEN-LAST:event_jButtonLoginActionPerformed
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonRegisterActionPerformed
