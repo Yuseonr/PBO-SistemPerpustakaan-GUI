@@ -9,14 +9,21 @@ CREATE DATABASE IF NOT EXISTS lib_test;
 USE lib_test;
 
 -- 2. Hapus tabel (urutan: child dulu, parent terakhir)
+-- Kita drop kedua versi (loan_transactions dan loans) jaga-jaga dari skema sebelumnya
+
+DROP TABLE IF EXISTS loans;
 DROP TABLE IF EXISTS book_copies;
 DROP TABLE IF EXISTS book_titles;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS library_config;
 
 -- ==========================================
--- TABEL 1: USERS (Single Table Inheritance)
+-- BAGIAN 1: DDL (DATA DEFINITION LANGUAGE)
+-- Membuat semua struktur tabel
 -- ==========================================
+
+-- TABEL 1: USERS
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -41,13 +48,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert Admin default (Email: admin@library.com | Password: admin123)
-INSERT INTO users (name, email, password_hash, role, active, created_by)
-VALUES ('Administrator Utama', 'admin@library.com', SHA2('admin123', 256), 'ADMIN', 1, 'System');
 
--- ==========================================
 -- TABEL 2: CATEGORIES
--- ==========================================
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -58,22 +60,8 @@ CREATE TABLE categories (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert Kategori
-INSERT INTO categories (name, description) VALUES
-('Fiksi',               'Novel, cerpen, dan karya fiksi lainnya'),
-('Non-Fiksi',           'Buku berbasis fakta, biografi, dan esai'),
-('Sains & Teknologi',   'Fisika, kimia, biologi, komputer, dan teknologi'),
-('Sejarah',             'Sejarah dunia, nasional, dan peradaban'),
-('Filsafat',            'Pemikiran filsafat, logika, dan etika'),
-('Ekonomi & Bisnis',    'Manajemen, keuangan, dan kewirausahaan'),
-('Pendidikan',          'Buku pelajaran, pedagogi, dan referensi akademik'),
-('Sastra Indonesia',    'Karya sastra klasik dan modern Indonesia'),
-('Pemrograman',         'Bahasa pemrograman, algoritma, dan pengembangan perangkat lunak'),
-('Psikologi',           'Psikologi umum, perkembangan, dan kesehatan mental');
 
--- ==========================================
 -- TABEL 3: BOOK_TITLES
--- ==========================================
 CREATE TABLE book_titles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -87,7 +75,94 @@ CREATE TABLE book_titles (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert 30 Judul Buku
+
+-- TABEL 4: BOOK_COPIES
+CREATE TABLE book_copies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_title_id INT NOT NULL,
+    location VARCHAR(100) DEFAULT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE',  -- 'AVAILABLE', 'RESERVED', 'LOANED', 'UNAVAILABLE'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_title_id) REFERENCES book_titles(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- TABEL 5: LOANS
+CREATE TABLE loans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    book_copy_id INT NOT NULL,
+    approved_by INT DEFAULT NULL,
+    borrow_type VARCHAR(20) NOT NULL, -- e.g., 'ON_SITE', 'TAKE_HOME'
+    status VARCHAR(20) NOT NULL,      -- e.g., 'PENDING', 'ACTIVE', 'RETURNED', 'OVERDUE', 'CANCELLED'
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    scheduled_pickup_date DATE DEFAULT NULL,
+    due_date DATE DEFAULT NULL,
+    return_date DATE DEFAULT NULL,
+    cancelled_at TIMESTAMP NULL DEFAULT NULL,
+    fine_amount DOUBLE DEFAULT 0.0,
+    fine_per_day_snapshot DOUBLE DEFAULT 0.0,
+    fine_calculated_at TIMESTAMP NULL DEFAULT NULL,
+    fine_paid_at TIMESTAMP NULL DEFAULT NULL,
+    fine_processed_by INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(50) DEFAULT 'System',
+    FOREIGN KEY (member_id) REFERENCES users(id),
+    FOREIGN KEY (book_copy_id) REFERENCES book_copies(id),
+    FOREIGN KEY (approved_by) REFERENCES users(id),
+    FOREIGN KEY (fine_processed_by) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- TABEL 6: LIBRARY_CONFIG
+CREATE TABLE library_config (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    library_name VARCHAR(255) DEFAULT 'Perpustakaan',
+    library_description TEXT DEFAULT NULL,
+    max_borrow_limit INT NOT NULL DEFAULT 3,
+    max_borrow_days INT NOT NULL DEFAULT 7,
+    max_reservation_days_ahead INT NOT NULL DEFAULT 3,
+    fine_per_day DOUBLE NOT NULL DEFAULT 1000.0,
+    pickup_window_days INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- ==========================================
+-- BAGIAN 2: DML (DATA MANIPULATION LANGUAGE)
+-- Memasukkan (Insert) data dummy ke tabel
+-- ==========================================
+
+-- INSERT CONFIG DEFAULT
+INSERT INTO library_config (library_name, library_description, max_borrow_limit, max_borrow_days, max_reservation_days_ahead, fine_per_day, pickup_window_days) 
+VALUES ('Perpustakaan Utama', 'Sistem Perpustakaan Pusat', 3, 7, 3, 1000.0, 1);
+
+-- INSERT USERS
+INSERT INTO users (name, email, password_hash, role, active, created_by)
+VALUES ('Atmin', 'min@lib.com', SHA2('min123', 256), 'ADMIN', 1, 'System');
+
+INSERT INTO users (name, email, password_hash, role, active, employee_number, shift_info, created_by)
+VALUES ('Pus', 'libra@lib.com', SHA2('lib123', 256), 'LIBRARIAN', 1, 'LIB-001', 'Pagi', 'System');
+
+INSERT INTO users (name, email, password_hash, role, active, membership_number, address, phone_number, member_status, created_by)
+VALUES ('Mber', 'mber@lib.com', SHA2('mber123', 256), 'MEMBER', 1, 'MEM-001', 'Jl. Perpustakaan No. 1', '081234567890', 'ACTIVE', 'System');
+
+-- INSERT CATEGORIES
+INSERT INTO categories (name, description) VALUES
+('Fiksi',               'Novel, cerpen, dan karya fiksi lainnya'),
+('Non-Fiksi',           'Buku berbasis fakta, biografi, dan esai'),
+('Sains & Teknologi',   'Fisika, kimia, biologi, komputer, dan teknologi'),
+('Sejarah',             'Sejarah dunia, nasional, dan peradaban'),
+('Filsafat',            'Pemikiran filsafat, logika, dan etika'),
+('Ekonomi & Bisnis',    'Manajemen, keuangan, dan kewirausahaan'),
+('Pendidikan',          'Buku pelajaran, pedagogi, dan referensi akademik'),
+('Sastra Indonesia',    'Karya sastra klasik dan modern Indonesia'),
+('Pemrograman',         'Bahasa pemrograman, algoritma, dan pengembangan perangkat lunak'),
+('Psikologi',           'Psikologi umum, perkembangan, dan kesehatan mental');
+
+-- INSERT BOOK TITLES
 INSERT INTO book_titles (title, author, publisher, isbn, description, category_id) VALUES
 -- Fiksi (category_id = 1)
 ('Laskar Pelangi',              'Andrea Hirata',          'Bentang Pustaka',    '978-979-1227-00-2', 'Kisah inspiratif 10 anak Belitung yang berjuang meraih mimpi melalui pendidikan.', 1),
@@ -139,78 +214,35 @@ INSERT INTO book_titles (title, author, publisher, isbn, description, category_i
 ('Man\'s Search for Meaning',   'Viktor E. Frankl',       'Beacon Press',       '978-080-7014-27-9', 'Kisah bertahan hidup di kamp konsentrasi dan pencarian makna hidup.', 10),
 ('Mindset: The New Psychology of Success', 'Carol S. Dweck', 'Ballantine Books', '978-034-5472-32-8', 'Perbedaan fixed mindset dan growth mindset serta dampaknya pada kehidupan.', 10);
 
--- ==========================================
--- TABEL 4: BOOK_COPIES (Salinan Fisik Buku)
--- ==========================================
-CREATE TABLE book_copies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_title_id INT NOT NULL,
-    location VARCHAR(100) DEFAULT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE',  -- 'AVAILABLE', 'RESERVED', 'LOANED', 'UNAVAILABLE'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (book_title_id) REFERENCES book_titles(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Insert salinan fisik (2-3 copy per judul, total ~70 copy)
+-- INSERT BOOK COPIES
 INSERT INTO book_copies (book_title_id, location, status) VALUES
--- Laskar Pelangi (id=1)
-(1, 'Rak A1-01', 'AVAILABLE'), (1, 'Rak A1-02', 'AVAILABLE'), (1, 'Rak A1-03', 'LOANED'),
--- Bumi Manusia (id=2)
+(1, 'Rak A1-01', 'AVAILABLE'), (1, 'Rak A1-02', 'AVAILABLE'), (1, 'Rak A1-03', 'AVAILABLE'),
 (2, 'Rak A1-04', 'AVAILABLE'), (2, 'Rak A1-05', 'AVAILABLE'),
--- Ronggeng Dukuh Paruk (id=3)
-(3, 'Rak A1-06', 'AVAILABLE'), (3, 'Rak A1-07', 'LOANED'),
--- Perahu Kertas (id=4)
+(3, 'Rak A1-06', 'AVAILABLE'), (3, 'Rak A1-07', 'AVAILABLE'),
 (4, 'Rak A1-08', 'AVAILABLE'), (4, 'Rak A1-09', 'AVAILABLE'),
--- Supernova (id=5)
-(5, 'Rak A1-10', 'AVAILABLE'), (5, 'Rak A1-11', 'AVAILABLE'), (5, 'Rak A1-12', 'LOANED'),
--- Sapiens (id=6)
+(5, 'Rak A1-10', 'AVAILABLE'), (5, 'Rak A1-11', 'AVAILABLE'), (5, 'Rak A1-12', 'AVAILABLE'),
 (6, 'Rak B1-01', 'AVAILABLE'), (6, 'Rak B1-02', 'AVAILABLE'),
--- Atomic Habits (id=7)
-(7, 'Rak B1-03', 'AVAILABLE'), (7, 'Rak B1-04', 'LOANED'), (7, 'Rak B1-05', 'AVAILABLE'),
--- Filosofi Teras (id=8)
+(7, 'Rak B1-03', 'AVAILABLE'), (7, 'Rak B1-04', 'AVAILABLE'), (7, 'Rak B1-05', 'AVAILABLE'),
 (8, 'Rak B1-06', 'AVAILABLE'), (8, 'Rak B1-07', 'AVAILABLE'),
--- A Brief History of Time (id=9)
 (9, 'Rak C1-01', 'AVAILABLE'), (9, 'Rak C1-02', 'AVAILABLE'),
--- Cosmos (id=10)
-(10, 'Rak C1-03', 'AVAILABLE'), (10, 'Rak C1-04', 'LOANED'),
--- The Innovators (id=11)
+(10, 'Rak C1-03', 'AVAILABLE'), (10, 'Rak C1-04', 'AVAILABLE'),
 (11, 'Rak C1-05', 'AVAILABLE'), (11, 'Rak C1-06', 'AVAILABLE'),
--- Sejarah Indonesia Modern (id=12)
 (12, 'Rak D1-01', 'AVAILABLE'), (12, 'Rak D1-02', 'AVAILABLE'),
--- Guns, Germs, and Steel (id=13)
 (13, 'Rak D1-03', 'AVAILABLE'), (13, 'Rak D1-04', 'AVAILABLE'),
--- Nusantara (id=14)
-(14, 'Rak D1-05', 'AVAILABLE'), (14, 'Rak D1-06', 'LOANED'),
--- Dunia Sophie (id=15)
+(14, 'Rak D1-05', 'AVAILABLE'), (14, 'Rak D1-06', 'AVAILABLE'),
 (15, 'Rak E1-01', 'AVAILABLE'), (15, 'Rak E1-02', 'AVAILABLE'),
--- Seni Berpikir Jernih (id=16)
 (16, 'Rak E1-03', 'AVAILABLE'), (16, 'Rak E1-04', 'AVAILABLE'),
--- Meditations (id=17)
 (17, 'Rak E1-05', 'AVAILABLE'), (17, 'Rak E1-06', 'AVAILABLE'),
--- Rich Dad Poor Dad (id=18)
-(18, 'Rak F1-01', 'AVAILABLE'), (18, 'Rak F1-02', 'LOANED'), (18, 'Rak F1-03', 'AVAILABLE'),
--- The Lean Startup (id=19)
+(18, 'Rak F1-01', 'AVAILABLE'), (18, 'Rak F1-02', 'AVAILABLE'), (18, 'Rak F1-03', 'AVAILABLE'),
 (19, 'Rak F1-04', 'AVAILABLE'), (19, 'Rak F1-05', 'AVAILABLE'),
--- Thinking, Fast and Slow (id=20)
 (20, 'Rak F1-06', 'AVAILABLE'), (20, 'Rak F1-07', 'AVAILABLE'),
--- Pendidikan Karakter (id=21)
 (21, 'Rak G1-01', 'AVAILABLE'), (21, 'Rak G1-02', 'AVAILABLE'),
--- Merdeka Belajar (id=22)
 (22, 'Rak G1-03', 'AVAILABLE'), (22, 'Rak G1-04', 'AVAILABLE'),
--- Saman (id=23)
-(23, 'Rak H1-01', 'AVAILABLE'), (23, 'Rak H1-02', 'LOANED'),
--- Cantik Itu Luka (id=24)
+(23, 'Rak H1-01', 'AVAILABLE'), (23, 'Rak H1-02', 'AVAILABLE'),
 (24, 'Rak H1-03', 'AVAILABLE'), (24, 'Rak H1-04', 'AVAILABLE'),
--- Hujan Bulan Juni (id=25)
 (25, 'Rak H1-05', 'AVAILABLE'), (25, 'Rak H1-06', 'AVAILABLE'),
--- Clean Code (id=26)
-(26, 'Rak I1-01', 'AVAILABLE'), (26, 'Rak I1-02', 'AVAILABLE'), (26, 'Rak I1-03', 'LOANED'),
--- Head First Java (id=27)
+(26, 'Rak I1-01', 'AVAILABLE'), (26, 'Rak I1-02', 'AVAILABLE'), (26, 'Rak I1-03', 'AVAILABLE'),
 (27, 'Rak I1-04', 'AVAILABLE'), (27, 'Rak I1-05', 'AVAILABLE'),
--- Design Patterns (id=28)
 (28, 'Rak I1-06', 'AVAILABLE'), (28, 'Rak I1-07', 'AVAILABLE'),
--- Man's Search for Meaning (id=29)
 (29, 'Rak J1-01', 'AVAILABLE'), (29, 'Rak J1-02', 'AVAILABLE'),
--- Mindset (id=30)
-(30, 'Rak J1-03', 'AVAILABLE'), (30, 'Rak J1-04', 'AVAILABLE'), (30, 'Rak J1-05', 'LOANED');
+(30, 'Rak J1-03', 'AVAILABLE'), (30, 'Rak J1-04', 'AVAILABLE'), (30, 'Rak J1-05', 'AVAILABLE');
