@@ -93,8 +93,8 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
     @Override
     public void update(LoanTransaction entity) {
         String sql = "UPDATE loans SET status = ?, scheduled_pickup_date = ?, due_date = ?, "
-                + "return_date = ?, cancelled_at = ?, fine_amount = ?, fine_per_day_snapshot = ?, "
-                + "fine_calculated_at = ?, approved_by = ? WHERE id = ?";
+            + "return_date = ?, cancelled_at = ?, fine_amount = ?, fine_per_day_snapshot = ?, "
+            + "fine_calculated_at = ?, approved_by = ?, fine_paid_at = ?, fine_processed_by = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -150,8 +150,20 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
                 stmt.setNull(9, java.sql.Types.INTEGER);
             }
 
-            // Parameter 10 — WHERE id = ?
-            stmt.setInt(10, entity.getId());
+            if (entity.getFinePaidAt() != null) {
+                stmt.setTimestamp(10, Timestamp.valueOf(entity.getFinePaidAt()));
+            } else {
+                stmt.setNull(10, java.sql.Types.TIMESTAMP);
+            }
+
+            if (entity.getFineProcessedBy() != null) {
+                stmt.setInt(11, entity.getFineProcessedBy().getId());
+            } else {
+                stmt.setNull(11, java.sql.Types.INTEGER);
+            }
+
+            // Parameter 12 — WHERE id = ?
+            stmt.setInt(12, entity.getId());
 
             stmt.executeUpdate();
 
@@ -343,17 +355,20 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
         return "SELECT l.id AS loan_id, l.borrow_type, l.status AS loan_status, "
                 + "l.request_date, l.scheduled_pickup_date, l.due_date, l.return_date, l.cancelled_at, "
                 + "l.fine_amount, l.fine_per_day_snapshot, l.fine_calculated_at, "
+                + "l.fine_paid_at, l.fine_processed_by, "
                 + "m.id AS member_id, m.name AS member_name, "
                 + "bc.id AS copy_id, bc.location, bc.status AS copy_status, "
             + "bt.id AS title_id, bt.title, bt.author, "
             + "c.id AS cat_id, c.name AS cat_name, "
-            + "lb.id AS librarian_id, lb.name AS librarian_name "
+            + "lb.id AS librarian_id, lb.name AS librarian_name, "
+            + "fp.id AS fine_processed_by_id, fp.name AS fine_processed_by_name "
                 + "FROM loans l "
                 + "INNER JOIN users m ON l.member_id = m.id "
                 + "INNER JOIN book_copies bc ON l.book_copy_id = bc.id "
                 + "INNER JOIN book_titles bt ON bc.book_title_id = bt.id "
             + "LEFT JOIN categories c ON bt.category_id = c.id "
-            + "LEFT JOIN users lb ON l.approved_by = lb.id";
+            + "LEFT JOIN users lb ON l.approved_by = lb.id "
+            + "LEFT JOIN users fp ON l.fine_processed_by = fp.id";
     }
 
     // Implementasi pemetaan ResultSet ke dalam objek LoanTransaction
@@ -387,6 +402,10 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
             txn.setFineCalculatedAt(rs.getTimestamp("fine_calculated_at").toLocalDateTime());
         }
 
+        if (rs.getTimestamp("fine_paid_at") != null) {
+            txn.setFinePaidAt(rs.getTimestamp("fine_paid_at").toLocalDateTime());
+        }
+
         // Mapping dilakukan secara dangkal karna harusnya tidak perlu semua data
 
         // Mapping Member
@@ -409,6 +428,13 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
             Librarian librarian = new Librarian(rs.getString("librarian_name"), null, null, null, null);
             librarian.setId(librarianId);
             txn.setApprovedBy(librarian);
+        }
+
+        int fineProcessedById = rs.getInt("fine_processed_by_id");
+        if (!rs.wasNull()) {
+            Librarian fineProcessor = new Librarian(rs.getString("fine_processed_by_name"), null, null, null, null);
+            fineProcessor.setId(fineProcessedById);
+            txn.setFineProcessedBy(fineProcessor);
         }
 
         return txn;

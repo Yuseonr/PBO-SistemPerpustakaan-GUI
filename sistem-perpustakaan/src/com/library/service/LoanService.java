@@ -136,6 +136,35 @@ public class LoanService {
         copyRepo.update(copy);
     }
 
+    // Pustakawan konfirmasi pembayaran denda
+    public void processFinePayment(Integer transactionId, Librarian librarian) {
+        if (librarian == null) {
+            throw new IllegalArgumentException("Pustakawan tidak boleh kosong.");
+        }
+
+        LoanTransaction txn = loanRepo.findById(transactionId);
+
+        if (txn == null) {
+            throw new IllegalArgumentException("Transaksi tidak ditemukan.");
+        }
+
+        if (txn.getStatus() != LoanStatus.RETURNED) {
+            throw new IllegalStateException("Pembayaran denda hanya bisa dilakukan setelah RETURNED.");
+        }
+
+        if (txn.getFineAmount() == null || txn.getFineAmount() <= 0) {
+            throw new IllegalStateException("Transaksi ini tidak memiliki denda.");
+        }
+
+        if (txn.getFinePaidAt() != null) {
+            throw new IllegalStateException("Denda sudah dibayar sebelumnya.");
+        }
+
+        txn.setFinePaidAt(LocalDateTime.now());
+        txn.setFineProcessedBy(librarian);
+        loanRepo.update(txn);
+    }
+
     // Member membatalkan peminjaman yang sudah diajukan tapi belum diambil
     public void cancelLoan(Integer transactionId, Member member) {
         LoanTransaction txn = loanRepo.findById(transactionId);

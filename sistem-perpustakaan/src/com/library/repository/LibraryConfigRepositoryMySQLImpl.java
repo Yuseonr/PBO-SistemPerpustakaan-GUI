@@ -46,7 +46,7 @@ public class LibraryConfigRepositoryMySQLImpl implements ILibraryConfigRepositor
         String sql = "UPDATE library_config SET fine_per_day = ?, max_borrow_days = ?, "
                 + "max_borrow_limit = ?, max_reservation_days_ahead = ?, pickup_window_days = ?, "
                 + "library_name = ?, library_description = ?"
-                + "WHERE id = 1"; 
+                + " WHERE id = 1"; 
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

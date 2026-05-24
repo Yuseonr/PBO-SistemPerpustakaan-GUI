@@ -37,6 +37,8 @@ public class LoanTransaction implements IAuditable {
     private Double fineAmount;
     private Double finePerDaySnapshot;
     private LocalDateTime fineCalculatedAt;
+    private LocalDateTime finePaidAt;
+    private Librarian fineProcessedBy;
     
     // Atribut untuk audit informasi
     private LocalDateTime createdAt;
@@ -95,6 +97,8 @@ public class LoanTransaction implements IAuditable {
     public Double getFineAmount() { return fineAmount; }
     public Double getFinePerDaySnapshot() { return finePerDaySnapshot; }
     public LocalDateTime getFineCalculatedAt() { return fineCalculatedAt; }
+    public LocalDateTime getFinePaidAt() { return finePaidAt; }
+    public Librarian getFineProcessedBy() { return fineProcessedBy; }
 
     // Setter default
     public void setId(Integer id) { this.id = id; }
@@ -111,5 +115,7 @@ public class LoanTransaction implements IAuditable {
     public void setFineAmount(Double fineAmount) { this.fineAmount = fineAmount; }
     public void setFinePerDaySnapshot(Double finePerDaySnapshot) { this.finePerDaySnapshot = finePerDaySnapshot; }
     public void setFineCalculatedAt(LocalDateTime fineCalculatedAt) { this.fineCalculatedAt = fineCalculatedAt; }
+    public void setFinePaidAt(LocalDateTime finePaidAt) { this.finePaidAt = finePaidAt; }
+    public void setFineProcessedBy(Librarian fineProcessedBy) { this.fineProcessedBy = fineProcessedBy; }
 
 }

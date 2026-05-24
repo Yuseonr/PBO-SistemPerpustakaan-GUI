@@ -387,6 +387,26 @@ public class MainLoan {
                 assertFail("Snapshot finePerDay", "actual: " + afterReturn.getFinePerDaySnapshot());
             }
 
+            // Step 4 — proses pembayaran denda
+            loanService.processFinePayment(txn.getId(), librarian);
+            LoanTransaction afterPayment = loanRepo.findById(txn.getId());
+
+            if (afterPayment.getFinePaidAt() != null) {
+                assertPass("finePaidAt tersimpan setelah pembayaran");
+            } else {
+                assertFail("finePaidAt tersimpan", "actual: null");
+            }
+
+            if (afterPayment.getFineProcessedBy() != null
+                    && afterPayment.getFineProcessedBy().getId().equals(librarian.getId())) {
+                assertPass("fineProcessedBy tersimpan dengan benar");
+            } else {
+                assertFail("fineProcessedBy", "actual: "
+                        + (afterPayment.getFineProcessedBy() == null
+                                ? "null"
+                                : afterPayment.getFineProcessedBy().getId()));
+            }
+
             if (freshCopy(TEST_COPY_2_ID).getStatus() == BookCopyStatus.AVAILABLE) {
                 assertPass("Status buku AVAILABLE setelah return");
             } else {
