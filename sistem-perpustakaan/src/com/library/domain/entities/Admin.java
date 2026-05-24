@@ -35,9 +35,9 @@ public class Admin extends User {
             "CRUD_LIBRARIAN",
             "RESET_PASSWORD",
             "MANAGE_CONFIG",
-            "VIEW_STATISTICS",
-            "VIEW_ALL_LOANS"
-        );
+            "VIEW_STATS",
+            "VIEW_ALL_LOANS",
+            "MANAGE_USER"
+        ); 
     }
-    
 }

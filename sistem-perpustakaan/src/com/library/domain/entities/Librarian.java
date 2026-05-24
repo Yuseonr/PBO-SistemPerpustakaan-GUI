@@ -42,7 +42,8 @@ public class Librarian extends User {
             "CRUD_CATEGORY",
             "CONFIRM_PICKUP",
             "CONFIRM_RETURN",
-            "VIEW_ALL_LOANS"
+            "VIEW_ALL_LOANS",
+            "CREATE_OFFLINE_LOAN"
         );
     }
 
