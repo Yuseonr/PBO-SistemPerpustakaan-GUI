@@ -27,19 +27,19 @@ public class MemberView {
     public void showMenu() {
         while (true) {
             TuiUtils.printHeader(member.getDashboardTitle());
-            System.out.println(TuiUtils.GREEN + "  Welcome back, " + member.getName() + "!" + TuiUtils.RESET);
+            System.out.println(TuiUtils.GREEN + "  Selamat datang kembali, " + member.getName() + "!" + TuiUtils.RESET);
             System.out.println();
             
             String[] options = {
-                "1. Interactive Catalog (Browse, Search & Borrow)",
-                "2. My Active Loans (Interactive)",
-                "3. My Loan History (Interactive)",
-                "0. Logout"
+                "1. Katalog Interaktif (Cari & Pinjam)",
+                "2. Pinjaman Aktif Saya (Interaktif)",
+                "3. Riwayat Pinjaman Saya (Interaktif)",
+                "0. Keluar (Logout)"
             };
             TuiUtils.printBoxMenu(options);
             System.out.println();
 
-            int choice = TuiUtils.readInt("Enter your choice: ");
+            int choice = TuiUtils.readInt("Masukkan pilihan: ");
 
             switch (choice) {
                 case 1:
@@ -52,10 +52,10 @@ public class MemberView {
                     interactiveLoanHistory();
                     break;
                 case 0:
-                    TuiUtils.printInfo("Logging out...");
+                    TuiUtils.printInfo("Keluar...");
                     return; 
                 default:
-                    TuiUtils.printError("Invalid choice.");
+                    TuiUtils.printError("Pilihan tidak valid.");
                     TuiUtils.waitForEnter();
             }
         }
@@ -68,7 +68,7 @@ public class MemberView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("INTERACTIVE CATALOG");
+            TuiUtils.printHeader("KATALOG INTERAKTIF");
             
             List<BookTitle> books = bookService.searchCatalog(keyword);
             int totalBooks = books.size();
@@ -81,15 +81,15 @@ public class MemberView {
             int end = Math.min(start + pageSize, totalBooks);
             
             if (keyword.isEmpty()) {
-                System.out.println(TuiUtils.YELLOW + "Showing all books (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Menampilkan semua buku (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             } else {
-                System.out.println(TuiUtils.YELLOW + "Search results for '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Hasil pencarian untuk '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             }
             
             if (books.isEmpty()) {
-                TuiUtils.printInfo("No books found.");
+                TuiUtils.printInfo("Buku tidak ditemukan.");
             } else {
-                String[] headers = {"ID", "Title", "Author", "Category", "Available"};
+                String[] headers = {"ID", "Judul", "Penulis", "Kategori", "Tersedia"};
                 String[][] data = new String[end - start][5];
                 
                 for (int i = start; i < end; i++) {
@@ -107,8 +107,8 @@ public class MemberView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext Page | [P]rev Page | [S]earch | [V]iew Detail | [B]orrow | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext Page | [P]rev Page | [S]earch | [V]iew Detail | [B]orrow | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             switch (cmd) {
                 case "N":
@@ -118,21 +118,21 @@ public class MemberView {
                     if (currentPage > 0) currentPage--;
                     break;
                 case "S":
-                    keyword = TuiUtils.readString("Enter keyword (leave empty for all): ");
+                    keyword = TuiUtils.readString("Masukkan kata kunci (kosongkan untuk semua): ");
                     currentPage = 0;
                     break;
                 case "V":
-                    int viewId = TuiUtils.readInt("Enter Book ID to view details: ");
+                    int viewId = TuiUtils.readInt("Masukkan ID Buku untuk lihat detail: ");
                     viewBookDetail(books, viewId);
                     break;
                 case "B":
-                    int borrowId = TuiUtils.readInt("Enter Book ID to borrow: ");
+                    int borrowId = TuiUtils.readInt("Masukkan ID Buku untuk dipinjam: ");
                     processBorrowOnline(books, borrowId);
                     break;
                 case "Q":
                     return;
                 default:
-                    TuiUtils.printError("Invalid command.");
+                    TuiUtils.printError("Perintah tidak valid.");
                     TuiUtils.waitForEnter();
             }
         }
@@ -143,18 +143,18 @@ public class MemberView {
         if (selected != null) {
             TuiUtils.clearScreen();
             String[] details = {
-                "Author: " + selected.getAuthor(),
+                "Penulis: " + selected.getAuthor(),
                 "ISBN: " + selected.getIsbn(),
-                "Publisher: " + selected.getPublisher(),
-                "Category: " + selected.getCategory().getName(),
-                "Stock Available: " + bookService.getAvailableStock(selected.getId()),
+                "Penerbit: " + selected.getPublisher(),
+                "Kategori: " + selected.getCategory().getName(),
+                "Stok Tersedia: " + bookService.getAvailableStock(selected.getId()),
                 "",
-                "Description:",
+                "Deskripsi:",
                 selected.getDescription()
             };
-            TuiUtils.printBoxDetail("BOOK: " + selected.getTitle(), details);
+            TuiUtils.printBoxDetail("BUKU: " + selected.getTitle(), details);
         } else {
-            TuiUtils.printError("Book ID not found in current search list.");
+            TuiUtils.printError("ID Buku tidak ditemukan dalam daftar pencarian.");
         }
         TuiUtils.waitForEnter();
     }
@@ -162,7 +162,7 @@ public class MemberView {
     private void processBorrowOnline(List<BookTitle> currentList, int titleId) {
         BookTitle selected = currentList.stream().filter(b -> b.getId() == titleId).findFirst().orElse(null);
         if (selected == null) {
-            TuiUtils.printError("Book ID not found in current search list.");
+            TuiUtils.printError("ID Buku tidak ditemukan dalam daftar pencarian.");
             TuiUtils.waitForEnter();
             return;
         }
@@ -170,18 +170,18 @@ public class MemberView {
         try {
             int stock = bookService.getAvailableStock(titleId);
             if (stock <= 0) {
-                TuiUtils.printError("Sorry, no copies available for this book.");
+                TuiUtils.printError("Maaf, tidak ada eksemplar tersedia untuk buku ini.");
             } else {
                 BookCopy copy = bookService.findAvailableCopyByTitleId(titleId);
                 if (copy == null) {
-                    TuiUtils.printError("Unexpected error: Physical copy not found despite stock > 0.");
+                    TuiUtils.printError("Error: Eksemplar fisik tidak ditemukan meskipun stok > 0.");
                     TuiUtils.waitForEnter();
                     return;
                 }
 
-                LocalDate pickupDate = TuiUtils.readDate("Enter pickup date");
+                LocalDate pickupDate = TuiUtils.readDate("Masukkan tanggal pengambilan");
                 loanService.requestOnlineLoan(member, copy, pickupDate);
-                TuiUtils.printSuccess("Book successfully reserved! Please pick it up on " + pickupDate);
+                TuiUtils.printSuccess("Buku berhasil direservasi! Silakan ambil pada " + pickupDate);
             }
         } catch (Exception e) {
             TuiUtils.printError(e.getMessage());
@@ -196,7 +196,13 @@ public class MemberView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("MY ACTIVE LOANS");
+            TuiUtils.printHeader("PINJAMAN AKTIF SAYA");
+            
+            try {
+                loanService.processScheduledPickups();
+                loanService.processExpiredPickups();
+                loanService.processOverdueLoans();
+            } catch (Exception e) {}
             
             List<LoanTransaction> allLoans = loanService.getMemberLoans(member);
             final String currentKeyword = keyword;
@@ -218,15 +224,15 @@ public class MemberView {
             int end = Math.min(start + pageSize, totalItems);
             
             if (keyword.isEmpty()) {
-                System.out.println(TuiUtils.YELLOW + "Showing active loans (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Menampilkan pinjaman aktif (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             } else {
-                System.out.println(TuiUtils.YELLOW + "Search results for '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Hasil pencarian untuk '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             }
             
             if (filtered.isEmpty()) {
-                TuiUtils.printInfo("No active loans found.");
+                TuiUtils.printInfo("Tidak ada pinjaman aktif.");
             } else {
-                String[] headers = {"Txn ID", "Book Title", "Status", "Pickup Date", "Due Date", "Fine"};
+                String[] headers = {"ID Txn", "Judul Buku", "Status", "Tgl Ambil", "Tenggat", "Denda"};
                 String[][] data = new String[end - start][6];
                 
                 for (int i = start; i < end; i++) {
@@ -247,8 +253,8 @@ public class MemberView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [C]ancel Pending | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [C]ancel Pending | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             try {
                 switch (cmd) {
@@ -259,19 +265,19 @@ public class MemberView {
                         if (currentPage > 0) currentPage--;
                         break;
                     case "S":
-                        keyword = TuiUtils.readString("Enter keyword (Title, Status, ID): ");
+                        keyword = TuiUtils.readString("Masukkan kata kunci (Judul, Status, ID): ");
                         currentPage = 0;
                         break;
                     case "C":
-                        int txnId = TuiUtils.readInt("Enter Txn ID to cancel: ");
+                        int txnId = TuiUtils.readInt("Masukkan ID Txn untuk dibatalkan: ");
                         loanService.cancelLoan(txnId, member);
-                        TuiUtils.printSuccess("Loan cancelled successfully.");
+                        TuiUtils.printSuccess("Pinjaman berhasil dibatalkan.");
                         TuiUtils.waitForEnter();
                         break;
                     case "Q":
                         return;
                     default:
-                        TuiUtils.printError("Invalid command.");
+                        TuiUtils.printError("Perintah tidak valid.");
                         TuiUtils.waitForEnter();
                 }
             } catch (Exception e) {
@@ -288,7 +294,13 @@ public class MemberView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("MY LOAN HISTORY");
+            TuiUtils.printHeader("RIWAYAT PINJAMAN SAYA");
+            
+            try {
+                loanService.processScheduledPickups();
+                loanService.processExpiredPickups();
+                loanService.processOverdueLoans();
+            } catch (Exception e) {}
             
             List<LoanTransaction> allLoans = loanService.getAllMemberLoans(member);
             final String currentKeyword = keyword;
@@ -311,15 +323,15 @@ public class MemberView {
             int end = Math.min(start + pageSize, totalItems);
             
             if (keyword.isEmpty()) {
-                System.out.println(TuiUtils.YELLOW + "Showing all returned loans (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Menampilkan semua pinjaman (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             } else {
-                System.out.println(TuiUtils.YELLOW + "Search results for '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Hasil pencarian untuk '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             }
             
             if (filtered.isEmpty()) {
-                TuiUtils.printInfo("No loan history found.");
+                TuiUtils.printInfo("Riwayat pinjaman tidak ditemukan.");
             } else {
-                String[] headers = {"Txn ID", "Book Title", "Borrow Date", "Return Date", "Fine"};
+                String[] headers = {"ID Txn", "Judul Buku", "Tgl Pinjam", "Tgl Kembali", "Denda"};
                 String[][] data = new String[end - start][5];
                 
                 for (int i = start; i < end; i++) {
@@ -340,8 +352,8 @@ public class MemberView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             switch (cmd) {
                 case "N":
@@ -351,13 +363,13 @@ public class MemberView {
                     if (currentPage > 0) currentPage--;
                     break;
                 case "S":
-                    keyword = TuiUtils.readString("Enter keyword (Title or ID): ");
+                    keyword = TuiUtils.readString("Masukkan kata kunci (Judul atau ID): ");
                     currentPage = 0;
                     break;
                 case "Q":
                     return;
                 default:
-                    TuiUtils.printError("Invalid command.");
+                    TuiUtils.printError("Perintah tidak valid.");
                     TuiUtils.waitForEnter();
             }
         }

@@ -14,15 +14,15 @@ public class AuthView {
 
     public User showMenu() {
         while (true) {
-            TuiUtils.printHeader("LIBRARY SYSTEM - AUTHENTICATION");
-            System.out.println("1. Login");
-            System.out.println("2. Register as Member");
+            TuiUtils.printHeader("SISTEM PERPUSTAKAAN - AUTENTIKASI");
+            System.out.println("1. Masuk (Login)");
+            System.out.println("2. Daftar sebagai Member");
             System.out.println("3. [DEV] Fast-Forward Time (+1 Day)");
             System.out.println("4. [DEV] Reset Database");
-            System.out.println("0. Exit System");
+            System.out.println("0. Keluar dari Sistem");
             System.out.println("--------------------------------------------------");
 
-            int choice = TuiUtils.readInt("Enter your choice: ");
+            int choice = TuiUtils.readInt("Masukkan pilihan: ");
 
             switch (choice) {
                 case 1:
@@ -41,11 +41,11 @@ public class AuthView {
                     clearDatabase();
                     break;
                 case 0:
-                    TuiUtils.printInfo("Exiting System. Goodbye!");
+                    TuiUtils.printInfo("Keluar dari Sistem. Sampai jumpa!");
                     System.exit(0);
                     break;
                 default:
-                    TuiUtils.printError("Invalid choice. Please select 1, 2, 3, 4, or 0.");
+                    TuiUtils.printError("Pilihan tidak valid. Silakan pilih 1, 2, 3, 4, atau 0.");
                     TuiUtils.waitForEnter();
             }
         }
@@ -62,17 +62,17 @@ public class AuthView {
                          "due_date = DATE_SUB(due_date, INTERVAL 1 DAY), " +
                          "return_date = DATE_SUB(return_date, INTERVAL 1 DAY)";
             int affected = stmt.executeUpdate(sql);
-            TuiUtils.printSuccess("Simulated +1 Day by shifting " + affected + " database records backward by 24 hours.");
-            TuiUtils.printInfo("Overdue logic will now treat today as tomorrow!");
+            TuiUtils.printSuccess("Simulasi +1 Hari berhasil dengan menggeser " + affected + " data mundur 24 jam.");
+            TuiUtils.printInfo("Logika overdue sekarang menganggap hari ini adalah besok!");
         } catch (Exception e) {
-            TuiUtils.printError("Failed to simulate time: " + e.getMessage());
+            TuiUtils.printError("Gagal simulasi waktu: " + e.getMessage());
         }
         TuiUtils.waitForEnter();
     }
 
     private void clearDatabase() {
         TuiUtils.printHeader("RESET DATABASE");
-        String confirm = TuiUtils.readString("Are you sure you want to completely wipe the database? (Y/N): ");
+        String confirm = TuiUtils.readString("Apakah Anda yakin ingin menghapus seluruh database? (Y/N): ");
         if (confirm.equalsIgnoreCase("Y")) {
             try (java.sql.Connection conn = com.library.config.DatabaseConfig.getConnection();
                  java.sql.Statement stmt = conn.createStatement()) {
@@ -86,15 +86,15 @@ public class AuthView {
                 stmt.execute("TRUNCATE TABLE library_config");
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
                 
-                TuiUtils.printSuccess("Database successfully wiped!");
-                TuiUtils.printInfo("Please restart the application to trigger the DummyDataSeeder and regenerate base data.");
+                TuiUtils.printSuccess("Database berhasil dihapus!");
+                TuiUtils.printInfo("Silakan jalankan ulang aplikasi untuk men-trigger DummyDataSeeder.");
                 System.exit(0);
             } catch (Exception e) {
-                TuiUtils.printError("Failed to clear database: " + e.getMessage());
+                TuiUtils.printError("Gagal menghapus database: " + e.getMessage());
                 TuiUtils.waitForEnter();
             }
         } else {
-            TuiUtils.printInfo("Reset cancelled.");
+            TuiUtils.printInfo("Reset dibatalkan.");
             TuiUtils.waitForEnter();
         }
     }
@@ -107,17 +107,17 @@ public class AuthView {
         if (email.equals("admin") && password.equals("123")) {
             try {
                 User admin = authService.login("admin@library.com", "123456");
-                TuiUtils.printSuccess("[DEV] Fast-track Admin Login successful.");
+                TuiUtils.printSuccess("[DEV] Fast-track Admin Login berhasil.");
                 TuiUtils.waitForEnter();
                 return admin;
             } catch (Exception e) {
-                TuiUtils.printError("Fast-track failed (Admin user might not be seeded yet). Falling back to normal login.");
+                TuiUtils.printError("Fast-track gagal. Kembali ke login normal.");
             }
         }
 
         try {
             User user = authService.login(email, password);
-            TuiUtils.printSuccess("Login successful! Welcome, " + user.getName());
+            TuiUtils.printSuccess("Login berhasil! Selamat datang, " + user.getName());
             TuiUtils.waitForEnter();
             return user;
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -128,17 +128,17 @@ public class AuthView {
     }
 
     private void processRegistration() {
-        TuiUtils.printHeader("REGISTER MEMBER");
-        String name = TuiUtils.readString("Full Name: ");
+        TuiUtils.printHeader("DAFTAR MEMBER");
+        String name = TuiUtils.readString("Nama Lengkap: ");
         String email = TuiUtils.readString("Email: ");
         String password = TuiUtils.readString("Password: ");
-        String membershipNumber = TuiUtils.readString("Membership Number (e.g. MEM-001): ");
-        String address = TuiUtils.readString("Address: ");
-        String phone = TuiUtils.readString("Phone Number: ");
+        String membershipNumber = TuiUtils.readString("Nomor Keanggotaan (contoh: MEM-001): ");
+        String address = TuiUtils.readString("Alamat: ");
+        String phone = TuiUtils.readString("Nomor Telepon: ");
 
         try {
             authService.registerMember(name, email, password, membershipNumber, address, phone);
-            TuiUtils.printSuccess("Registration successful! You can now login.");
+            TuiUtils.printSuccess("Registrasi berhasil! Anda sekarang dapat login.");
             TuiUtils.waitForEnter();
         } catch (IllegalArgumentException e) {
             TuiUtils.printError(e.getMessage());

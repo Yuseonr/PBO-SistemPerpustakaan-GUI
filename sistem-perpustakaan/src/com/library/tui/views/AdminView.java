@@ -29,19 +29,19 @@ public class AdminView {
     public void showMenu() {
         while (true) {
             TuiUtils.printHeader(admin.getDashboardTitle());
-            System.out.println(TuiUtils.GREEN + "  Welcome, " + admin.getName() + " (Admin)" + TuiUtils.RESET);
+            System.out.println(TuiUtils.GREEN + "  Selamat datang, " + admin.getName() + " (Admin)" + TuiUtils.RESET);
             System.out.println();
             
             String[] options = {
-                "1. View Dashboard Stats",
-                "2. Interactive User Manager",
-                "3. System Configuration",
-                "0. Logout"
+                "1. Lihat Statistik Dashboard",
+                "2. Manajer User Interaktif",
+                "3. Konfigurasi Sistem",
+                "0. Keluar (Logout)"
             };
             TuiUtils.printBoxMenu(options);
             System.out.println();
 
-            int choice = TuiUtils.readInt("Enter your choice: ");
+            int choice = TuiUtils.readInt("Masukkan pilihan: ");
 
             switch (choice) {
                 case 1:
@@ -54,31 +54,31 @@ public class AdminView {
                     systemConfiguration();
                     break;
                 case 0:
-                    TuiUtils.printInfo("Logging out...");
+                    TuiUtils.printInfo("Keluar...");
                     return;
                 default:
-                    TuiUtils.printError("Invalid choice.");
+                    TuiUtils.printError("Pilihan tidak valid.");
                     TuiUtils.waitForEnter();
             }
         }
     }
 
     private void viewStats() {
-        TuiUtils.printHeader("DASHBOARD STATS");
+        TuiUtils.printHeader("STATISTIK DASHBOARD");
         try {
             DashboardStats stats = reportService.generateDashboardStats(admin);
             String[] details = {
-                "Total Active Members : " + stats.getTotalActiveMembers(),
-                "Total Librarians     : " + stats.getTotalLibrarians(),
-                "Total Admins         : " + stats.getTotalAdmins(),
+                "Total Member Aktif : " + stats.getTotalActiveMembers(),
+                "Total Pustakawan   : " + stats.getTotalLibrarians(),
+                "Total Admin        : " + stats.getTotalAdmins(),
                 "",
-                "Total Categories     : " + stats.getTotalCategories(),
-                "Total Book Titles    : " + stats.getTotalBookTitles(),
-                "Total Book Copies    : " + stats.getTotalBookCopies(),
+                "Total Kategori     : " + stats.getTotalCategories(),
+                "Total Judul Buku   : " + stats.getTotalBookTitles(),
+                "Total Eksemplar    : " + stats.getTotalBookCopies(),
                 "",
-                "Total Fines Collected: Rp. " + stats.getTotalFineCollected()
+                "Total Denda Terkumpul: Rp. " + stats.getTotalFineCollected()
             };
-            TuiUtils.printBoxDetail("LIBRARY METRICS", details);
+            TuiUtils.printBoxDetail("METRIK PERPUSTAKAAN", details);
         } catch (Exception e) {
             TuiUtils.printError(e.getMessage());
         }
@@ -93,7 +93,7 @@ public class AdminView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("INTERACTIVE USER MANAGER");
+            TuiUtils.printHeader("MANAJER USER INTERAKTIF");
             
             List<User> allUsers = userService.getAllUsers();
             final String currentKeyword = keyword;
@@ -116,12 +116,12 @@ public class AdminView {
             int start = currentPage * pageSize;
             int end = Math.min(start + pageSize, totalItems);
             
-            System.out.println(TuiUtils.YELLOW + "Filter: " + currentRoleFilter + " | Search: '" + currentKeyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+            System.out.println(TuiUtils.YELLOW + "Filter: " + currentRoleFilter + " | Pencarian: '" + currentKeyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             
             if (filtered.isEmpty()) {
-                TuiUtils.printInfo("No users found.");
+                TuiUtils.printInfo("Tidak ada user ditemukan.");
             } else {
-                String[] headers = {"ID", "Name", "Email", "Role", "Active"};
+                String[] headers = {"ID", "Nama", "Email", "Role", "Aktif"};
                 String[][] data = new String[end - start][5];
                 
                 for (int i = start; i < end; i++) {
@@ -135,14 +135,14 @@ public class AdminView {
                     data[i - start][1] = name;
                     data[i - start][2] = email;
                     data[i - start][3] = u.getRole().name();
-                    data[i - start][4] = u.isActive() ? "YES" : "NO";
+                    data[i - start][4] = u.isActive() ? "YA" : "TIDAK";
                 }
                 TuiUtils.printTable(headers, data);
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [F]ilter Role | [R]egister Librarian | [T]oggle Status | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [F]ilter Role | [R]egister Librarian | [T]oggle Status | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             try {
                 switch (cmd) {
@@ -153,12 +153,12 @@ public class AdminView {
                         if (currentPage > 0) currentPage--;
                         break;
                     case "S":
-                        keyword = TuiUtils.readString("Enter keyword (Name, Email, ID): ");
+                        keyword = TuiUtils.readString("Masukkan kata kunci (Nama, Email, ID): ");
                         currentPage = 0;
                         break;
                     case "F":
-                        System.out.println("Available roles: ALL, MEMBER, LIBRARIAN, ADMIN");
-                        String f = TuiUtils.readString("Enter role: ").toUpperCase();
+                        System.out.println("Role tersedia: ALL, MEMBER, LIBRARIAN, ADMIN");
+                        String f = TuiUtils.readString("Masukkan role: ").toUpperCase();
                         roleFilter = f;
                         currentPage = 0;
                         break;
@@ -171,7 +171,7 @@ public class AdminView {
                     case "Q":
                         return;
                     default:
-                        TuiUtils.printError("Invalid command.");
+                        TuiUtils.printError("Perintah tidak valid.");
                         TuiUtils.waitForEnter();
                 }
             } catch (Exception e) {
@@ -183,17 +183,17 @@ public class AdminView {
 
     private void registerLibrarian() {
         System.out.println();
-        System.out.println(TuiUtils.CYAN + "--- REGISTER LIBRARIAN ---" + TuiUtils.RESET);
-        String name = TuiUtils.readString("Name: ");
+        System.out.println(TuiUtils.CYAN + "--- DAFTAR PUSTAKAWAN ---" + TuiUtils.RESET);
+        String name = TuiUtils.readString("Nama: ");
         String email = TuiUtils.readString("Email: ");
         String password = TuiUtils.readString("Password: ");
-        String empNumber = TuiUtils.readString("Employee Number: ");
-        String shiftInfo = TuiUtils.readString("Shift Info: ");
+        String empNumber = TuiUtils.readString("Nomor Pegawai: ");
+        String shiftInfo = TuiUtils.readString("Info Shift: ");
         
         try {
             Librarian newLibrarian = new Librarian(name, email, "", empNumber, shiftInfo);
             userService.registerLibrarian(admin, newLibrarian, password);
-            TuiUtils.printSuccess("Librarian registered successfully!");
+            TuiUtils.printSuccess("Pustakawan berhasil didaftarkan!");
         } catch (Exception e) {
             TuiUtils.printError(e.getMessage());
         }
@@ -202,21 +202,21 @@ public class AdminView {
 
     private void toggleUserStatus() {
         System.out.println();
-        int userId = TuiUtils.readInt("Enter User ID to toggle status: ");
+        int userId = TuiUtils.readInt("Masukkan ID User untuk ubah status: ");
         System.out.println();
-        String[] options = {"1. Suspend User", "2. Activate User"};
+        String[] options = {"1. Suspend User", "2. Aktifkan User"};
         TuiUtils.printBoxMenu(options);
-        int action = TuiUtils.readInt("Choice: ");
+        int action = TuiUtils.readInt("Pilihan: ");
         
         try {
             if (action == 1) {
                 userService.suspendUser(admin, userId);
-                TuiUtils.printSuccess("User suspended.");
+                TuiUtils.printSuccess("User di-suspend.");
             } else if (action == 2) {
                 userService.activateUser(admin, userId);
-                TuiUtils.printSuccess("User activated.");
+                TuiUtils.printSuccess("User diaktifkan.");
             } else {
-                TuiUtils.printError("Invalid choice.");
+                TuiUtils.printError("Pilihan tidak valid.");
             }
         } catch (Exception e) {
             TuiUtils.printError(e.getMessage());
@@ -225,59 +225,59 @@ public class AdminView {
     }
 
     private void systemConfiguration() {
-        TuiUtils.printHeader("SYSTEM CONFIGURATION");
+        TuiUtils.printHeader("KONFIGURASI SISTEM");
         try {
             LibraryConfig config = configService.getLibraryConfig();
             if(config == null) {
-                TuiUtils.printError("Config not found in database.");
+                TuiUtils.printError("Config tidak ditemukan di database.");
                 TuiUtils.waitForEnter();
                 return;
             }
             String[] details = {
-                "Library Name: " + config.getLibraryName(),
-                "Fine Per Day: " + config.getFinePerDay(),
-                "Max Borrow Days: " + config.getMaxBorrowDays(),
-                "Max Borrow Limit: " + config.getMaxBorrowLimit(),
-                "Max Reservation Days Ahead: " + config.getMaxReservationDaysAhead(),
-                "Pickup Window Days: " + config.getPickupWindowDays()
+                "Nama Perpustakaan: " + config.getLibraryName(),
+                "Denda Per Hari: " + config.getFinePerDay(),
+                "Maks Hari Pinjam: " + config.getMaxBorrowDays(),
+                "Batas Maks Pinjam: " + config.getMaxBorrowLimit(),
+                "Maks Hari Reservasi ke Depan: " + config.getMaxReservationDaysAhead(),
+                "Hari Batas Pengambilan: " + config.getPickupWindowDays()
             };
-            TuiUtils.printBoxDetail("CURRENT CONFIG", details);
+            TuiUtils.printBoxDetail("CONFIG SAAT INI", details);
             System.out.println();
             
-            int update = TuiUtils.readInt("Update config? (1 for Yes, 0 for No): ");
+            int update = TuiUtils.readInt("Update config? (1 untuk Ya, 0 untuk Tidak): ");
             if (update == 1) {
-                String newName = TuiUtils.readString("New Library Name (or press Enter to keep current): ");
+                String newName = TuiUtils.readString("Nama Perpustakaan Baru (tekan Enter untuk lewati): ");
                 if(!newName.trim().isEmpty()) {
                     config.setLibraryName(newName);
                 }
                 
-                String newFine = TuiUtils.readString("New Fine Per Day (or press Enter to keep current): ");
+                String newFine = TuiUtils.readString("Denda Per Hari Baru (tekan Enter untuk lewati): ");
                 if(!newFine.trim().isEmpty()) {
                     config.setFinePerDay(Double.parseDouble(newFine));
                 }
 
-                String newMaxBorrow = TuiUtils.readString("New Max Borrow Days (or press Enter to keep current): ");
+                String newMaxBorrow = TuiUtils.readString("Maks Hari Pinjam Baru (tekan Enter untuk lewati): ");
                 if(!newMaxBorrow.trim().isEmpty()) {
                     config.setMaxBorrowDays(Integer.parseInt(newMaxBorrow));
                 }
 
-                String newMaxLimit = TuiUtils.readString("New Max Borrow Limit (or press Enter to keep current): ");
+                String newMaxLimit = TuiUtils.readString("Batas Maks Pinjam Baru (tekan Enter untuk lewati): ");
                 if(!newMaxLimit.trim().isEmpty()) {
                     config.setMaxBorrowLimit(Integer.parseInt(newMaxLimit));
                 }
 
-                String newMaxRes = TuiUtils.readString("New Max Reservation Days Ahead (or press Enter to keep current): ");
+                String newMaxRes = TuiUtils.readString("Maks Hari Reservasi Baru (tekan Enter untuk lewati): ");
                 if(!newMaxRes.trim().isEmpty()) {
                     config.setMaxReservationDaysAhead(Integer.parseInt(newMaxRes));
                 }
 
-                String newPickup = TuiUtils.readString("New Pickup Window Days (or press Enter to keep current): ");
+                String newPickup = TuiUtils.readString("Hari Batas Pengambilan Baru (tekan Enter untuk lewati): ");
                 if(!newPickup.trim().isEmpty()) {
                     config.setPickupWindowDays(Integer.parseInt(newPickup));
                 }
                 
                 configService.updateLibraryConfig(admin, config);
-                TuiUtils.printSuccess("Configuration updated successfully.");
+                TuiUtils.printSuccess("Konfigurasi berhasil diperbarui.");
             }
         } catch (Exception e) {
             TuiUtils.printError(e.getMessage());

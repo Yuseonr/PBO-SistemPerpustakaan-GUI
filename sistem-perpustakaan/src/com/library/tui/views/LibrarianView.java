@@ -33,19 +33,19 @@ public class LibrarianView {
     public void showMenu() {
         while (true) {
             TuiUtils.printHeader(librarian.getDashboardTitle());
-            System.out.println(TuiUtils.GREEN + "  Welcome, " + librarian.getName() + " (Librarian)" + TuiUtils.RESET);
+            System.out.println(TuiUtils.GREEN + "  Selamat datang, " + librarian.getName() + " (Pustakawan)" + TuiUtils.RESET);
             System.out.println();
             
             String[] options = {
-                "1. Manage Books (Interactive Catalog)",
-                "2. Manage Categories",
-                "3. Manage Loans (Confirm, Return, Fine)",
-                "0. Logout"
+                "1. Kelola Buku (Katalog Interaktif)",
+                "2. Kelola Kategori",
+                "3. Kelola Pinjaman (Konfirmasi, Kembali, Denda)",
+                "0. Keluar (Logout)"
             };
             TuiUtils.printBoxMenu(options);
             System.out.println();
 
-            int choice = TuiUtils.readInt("Enter your choice: ");
+            int choice = TuiUtils.readInt("Masukkan pilihan: ");
 
             switch (choice) {
                 case 1:
@@ -58,10 +58,10 @@ public class LibrarianView {
                     interactiveLoans();
                     break;
                 case 0:
-                    TuiUtils.printInfo("Logging out...");
+                    TuiUtils.printInfo("Keluar...");
                     return; 
                 default:
-                    TuiUtils.printError("Invalid choice.");
+                    TuiUtils.printError("Pilihan tidak valid.");
                     TuiUtils.waitForEnter();
             }
         }
@@ -74,7 +74,7 @@ public class LibrarianView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("MANAGE BOOKS");
+            TuiUtils.printHeader("KELOLA BUKU");
             
             List<BookTitle> books = bookService.searchCatalog(keyword);
             int totalBooks = books.size();
@@ -87,15 +87,15 @@ public class LibrarianView {
             int end = Math.min(start + pageSize, totalBooks);
             
             if (keyword.isEmpty()) {
-                System.out.println(TuiUtils.YELLOW + "Showing all books (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Menampilkan semua buku (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             } else {
-                System.out.println(TuiUtils.YELLOW + "Search results for '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Hasil pencarian untuk '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             }
             
             if (books.isEmpty()) {
-                TuiUtils.printInfo("No books found.");
+                TuiUtils.printInfo("Buku tidak ditemukan.");
             } else {
-                String[] headers = {"ID", "Title", "Author", "Category", "Available"};
+                String[] headers = {"ID", "Judul", "Penulis", "Kategori", "Tersedia"};
                 String[][] data = new String[end - start][5];
                 
                 for (int i = start; i < end; i++) {
@@ -113,8 +113,8 @@ public class LibrarianView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [A]dd | [U]pdate | [D]elete | [C]opies | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [A]dd | [U]pdate | [D]elete | [C]opies | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             try {
                 switch (cmd) {
@@ -125,54 +125,54 @@ public class LibrarianView {
                         if (currentPage > 0) currentPage--;
                         break;
                     case "S":
-                        keyword = TuiUtils.readString("Enter keyword (leave empty for all): ");
+                        keyword = TuiUtils.readString("Masukkan kata kunci (kosongkan untuk semua): ");
                         currentPage = 0;
                         break;
                     case "A":
-                        String title = TuiUtils.readString("Title: ");
-                        String author = TuiUtils.readString("Author: ");
-                        String publisher = TuiUtils.readString("Publisher: ");
+                        String title = TuiUtils.readString("Judul: ");
+                        String author = TuiUtils.readString("Penulis: ");
+                        String publisher = TuiUtils.readString("Penerbit: ");
                         String isbn = TuiUtils.readString("ISBN: ");
-                        String desc = TuiUtils.readString("Desc: ");
-                        int catId = TuiUtils.readInt("Category ID: ");
+                        String desc = TuiUtils.readString("Deskripsi: ");
+                        int catId = TuiUtils.readInt("ID Kategori: ");
                         Category cat = categoryService.getAllActiveCategories().stream().filter(c -> c.getId() == catId).findFirst().orElse(null);
                         if (cat == null) throw new IllegalArgumentException("Invalid Category ID");
                         bookService.addBookTitle(librarian, title, author, publisher, isbn, desc, cat);
-                        TuiUtils.printSuccess("Book Title Added!");
+                        TuiUtils.printSuccess("Judul Buku Ditambahkan!");
                         TuiUtils.waitForEnter();
                         break;
                     case "U":
-                        int uid = TuiUtils.readInt("Enter Book ID to Update: ");
-                        String utitle = TuiUtils.readString("New Title: ");
-                        String uauthor = TuiUtils.readString("New Author: ");
-                        String upublisher = TuiUtils.readString("New Publisher: ");
-                        String uisbn = TuiUtils.readString("New ISBN: ");
-                        String udesc = TuiUtils.readString("New Desc: ");
-                        int ucatId = TuiUtils.readInt("New Category ID: ");
+                        int uid = TuiUtils.readInt("Masukkan ID Buku untuk Diperbarui: ");
+                        String utitle = TuiUtils.readString("Judul Baru: ");
+                        String uauthor = TuiUtils.readString("Penulis Baru: ");
+                        String upublisher = TuiUtils.readString("Penerbit Baru: ");
+                        String uisbn = TuiUtils.readString("ISBN Baru: ");
+                        String udesc = TuiUtils.readString("Deskripsi Baru: ");
+                        int ucatId = TuiUtils.readInt("ID Kategori Baru: ");
                         Category ucat = categoryService.getAllActiveCategories().stream().filter(c -> c.getId() == ucatId).findFirst().orElse(null);
                         if (ucat == null) throw new IllegalArgumentException("Invalid Category ID");
                         bookService.updateBookTitle(librarian, uid, utitle, uauthor, upublisher, uisbn, udesc, ucat);
-                        TuiUtils.printSuccess("Book Title Updated!");
+                        TuiUtils.printSuccess("Judul Buku Diperbarui!");
                         TuiUtils.waitForEnter();
                         break;
                     case "D":
-                        int did = TuiUtils.readInt("Enter Book ID to Delete: ");
+                        int did = TuiUtils.readInt("Masukkan ID Buku untuk Dihapus: ");
                         bookService.deleteBookTitle(librarian, did);
-                        TuiUtils.printSuccess("Book Title Deleted!");
+                        TuiUtils.printSuccess("Judul Buku Dihapus!");
                         TuiUtils.waitForEnter();
                         break;
                     case "C":
-                        int copyTitleId = TuiUtils.readInt("Enter Book ID to Add Copies to: ");
-                        int numCopies = TuiUtils.readInt("Number of copies to add: ");
-                        String location = TuiUtils.readString("Location (e.g. Shelf A1): ");
+                        int copyTitleId = TuiUtils.readInt("Masukkan ID Buku untuk Tambah Eksemplar: ");
+                        int numCopies = TuiUtils.readInt("Jumlah eksemplar untuk ditambah: ");
+                        String location = TuiUtils.readString("Lokasi (contoh: Rak A1): ");
                         bookService.addBookCopies(librarian, copyTitleId, numCopies, location);
-                        TuiUtils.printSuccess(numCopies + " copies added to book " + copyTitleId);
+                        TuiUtils.printSuccess(numCopies + " eksemplar ditambahkan ke buku " + copyTitleId);
                         TuiUtils.waitForEnter();
                         break;
                     case "Q":
                         return;
                     default:
-                        TuiUtils.printError("Invalid command.");
+                        TuiUtils.printError("Perintah tidak valid.");
                         TuiUtils.waitForEnter();
                 }
             } catch (Exception e) {
@@ -189,7 +189,7 @@ public class LibrarianView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("MANAGE CATEGORIES");
+            TuiUtils.printHeader("KELOLA KATEGORI");
             
             List<Category> allCats = categoryService.getAllActiveCategories();
             final String currentKeyword = keyword;
@@ -207,15 +207,15 @@ public class LibrarianView {
             int end = Math.min(start + pageSize, totalItems);
             
             if (keyword.isEmpty()) {
-                System.out.println(TuiUtils.YELLOW + "Showing active categories (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Menampilkan kategori aktif (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             } else {
-                System.out.println(TuiUtils.YELLOW + "Search results for '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+                System.out.println(TuiUtils.YELLOW + "Hasil pencarian untuk '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             }
             
             if (filtered.isEmpty()) {
-                TuiUtils.printInfo("No categories found.");
+                TuiUtils.printInfo("Kategori tidak ditemukan.");
             } else {
-                String[] headers = {"ID", "Name", "Description"};
+                String[] headers = {"ID", "Nama", "Deskripsi"};
                 String[][] data = new String[end - start][3];
                 
                 for (int i = start; i < end; i++) {
@@ -230,8 +230,8 @@ public class LibrarianView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [A]dd | [U]pdate | [D]elete | [R]eactivate | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [A]dd | [U]pdate | [D]elete | [R]eactivate | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             try {
                 switch (cmd) {
@@ -242,40 +242,40 @@ public class LibrarianView {
                         if (currentPage > 0) currentPage--;
                         break;
                     case "S":
-                        keyword = TuiUtils.readString("Enter keyword (leave empty for all): ");
+                        keyword = TuiUtils.readString("Masukkan kata kunci (kosongkan untuk semua): ");
                         currentPage = 0;
                         break;
                     case "A":
-                        String name = TuiUtils.readString("Name: ");
-                        String desc = TuiUtils.readString("Desc: ");
+                        String name = TuiUtils.readString("Nama: ");
+                        String desc = TuiUtils.readString("Deskripsi: ");
                         categoryService.createCategory(librarian, name, desc);
-                        TuiUtils.printSuccess("Category created.");
+                        TuiUtils.printSuccess("Kategori dibuat.");
                         TuiUtils.waitForEnter();
                         break;
                     case "U":
-                        int id = TuiUtils.readInt("Category ID: ");
-                        String newName = TuiUtils.readString("New Name: ");
-                        String newDesc = TuiUtils.readString("New Desc: ");
+                        int id = TuiUtils.readInt("ID Kategori: ");
+                        String newName = TuiUtils.readString("Nama Baru: ");
+                        String newDesc = TuiUtils.readString("Deskripsi Baru: ");
                         categoryService.updateCategory(librarian, id, newName, newDesc);
-                        TuiUtils.printSuccess("Category updated.");
+                        TuiUtils.printSuccess("Kategori diperbarui.");
                         TuiUtils.waitForEnter();
                         break;
                     case "D":
-                        int delId = TuiUtils.readInt("Category ID to delete: ");
+                        int delId = TuiUtils.readInt("ID Kategori untuk dihapus: ");
                         categoryService.deleteCategory(librarian, delId);
-                        TuiUtils.printSuccess("Category deleted.");
+                        TuiUtils.printSuccess("Kategori dihapus.");
                         TuiUtils.waitForEnter();
                         break;
                     case "R":
-                        int reactId = TuiUtils.readInt("Category ID to reactivate (need exact ID): ");
+                        int reactId = TuiUtils.readInt("ID Kategori untuk diaktifkan ulang (butuh ID pasti): ");
                         categoryService.reactivateCategory(librarian, reactId);
-                        TuiUtils.printSuccess("Category reactivated.");
+                        TuiUtils.printSuccess("Kategori diaktifkan ulang.");
                         TuiUtils.waitForEnter();
                         break;
                     case "Q":
                         return;
                     default:
-                        TuiUtils.printError("Invalid command.");
+                        TuiUtils.printError("Perintah tidak valid.");
                         TuiUtils.waitForEnter();
                 }
             } catch (Exception e) {
@@ -293,7 +293,13 @@ public class LibrarianView {
 
         while (true) {
             TuiUtils.clearScreen();
-            TuiUtils.printHeader("MANAGE LOANS");
+            TuiUtils.printHeader("KELOLA PINJAMAN");
+            
+            try {
+                loanService.processScheduledPickups();
+                loanService.processExpiredPickups();
+                loanService.processOverdueLoans();
+            } catch (Exception e) {}
             
             List<LoanTransaction> allLoans = loanService.getAllLoans();
             final String currentStatusFilter = statusFilter;
@@ -315,12 +321,12 @@ public class LibrarianView {
             int start = currentPage * pageSize;
             int end = Math.min(start + pageSize, totalItems);
             
-            System.out.println(TuiUtils.YELLOW + "Filter: " + statusFilter + " | Search: '" + keyword + "' (Page " + (currentPage + 1) + " of " + totalPages + ")" + TuiUtils.RESET);
+            System.out.println(TuiUtils.YELLOW + "Filter: " + statusFilter + " | Pencarian: '" + keyword + "' (Halaman " + (currentPage + 1) + " dari " + totalPages + ")" + TuiUtils.RESET);
             
             if (filtered.isEmpty()) {
-                TuiUtils.printInfo("No loans found.");
+                TuiUtils.printInfo("Pinjaman tidak ditemukan.");
             } else {
-                String[] headers = {"Txn ID", "Member", "Book Title", "Status", "Due Date", "Fine"};
+                String[] headers = {"ID Txn", "Member", "Judul Buku", "Status", "Tenggat", "Denda"};
                 String[][] data = new String[end - start][6];
                 
                 for (int i = start; i < end; i++) {
@@ -342,8 +348,8 @@ public class LibrarianView {
             }
             
             System.out.println();
-            System.out.println(TuiUtils.CYAN + "Commands: [N]ext | [P]rev | [S]earch | [F]ilter | [O]ffline Borrow | [C]onfirm | [R]eturn | P[A]y Fine | [Q]uit" + TuiUtils.RESET);
-            String cmd = TuiUtils.readString("Enter command: ").trim().toUpperCase();
+            System.out.println(TuiUtils.CYAN + "Perintah: [N]ext | [P]rev | [S]earch | [F]ilter | [O]ffline Borrow | [C]onfirm | [R]eturn | P[A]y Fine | [Q]uit" + TuiUtils.RESET);
+            String cmd = TuiUtils.readString("Masukkan perintah: ").trim().toUpperCase();
             
             try {
                 switch (cmd) {
@@ -354,43 +360,42 @@ public class LibrarianView {
                         if (currentPage > 0) currentPage--;
                         break;
                     case "S":
-                        keyword = TuiUtils.readString("Enter keyword (Member name, Title, Txn ID): ");
+                        keyword = TuiUtils.readString("Masukkan kata kunci (Nama Member, Judul, ID Txn): ");
                         currentPage = 0;
                         break;
                     case "F":
-                        String[] statuses = {"ALL", "WAITING_PICKUP", "ACTIVE", "OVERDUE", "RETURNED"};
-                        System.out.println("Available statuses: ALL, WAITING_PICKUP, ACTIVE, OVERDUE, RETURNED");
-                        String f = TuiUtils.readString("Enter status: ").toUpperCase();
+                        System.out.println("Status tersedia: ALL, WAITING_PICKUP, ACTIVE, OVERDUE, RETURNED");
+                        String f = TuiUtils.readString("Masukkan status: ").toUpperCase();
                         statusFilter = f;
                         currentPage = 0;
                         break;
                     case "O":
-                        TuiUtils.printInfo("Cannot safely execute Offline Borrow without fetching Member objects directly.");
-                        TuiUtils.printInfo("Use raw IDs to simulate or implement a separate member selection UI.");
+                        TuiUtils.printInfo("Tidak dapat melakukan Offline Borrow tanpa objek Member langsung.");
+                        TuiUtils.printInfo("Gunakan ID mentah untuk simulasi atau buat UI pemilihan member terpisah.");
                         TuiUtils.waitForEnter();
                         break;
                     case "C":
-                        int confirmId = TuiUtils.readInt("Enter Txn ID to confirm pickup: ");
+                        int confirmId = TuiUtils.readInt("Masukkan ID Txn untuk konfirmasi ambil: ");
                         loanService.confirmPickup(confirmId, (com.library.domain.entities.Librarian) librarian);
-                        TuiUtils.printSuccess("Pickup confirmed! Loan is now ACTIVE.");
+                        TuiUtils.printSuccess("Ambil dikonfirmasi! Pinjaman sekarang ACTIVE.");
                         TuiUtils.waitForEnter();
                         break;
                     case "R":
-                        int returnId = TuiUtils.readInt("Enter Txn ID to return: ");
+                        int returnId = TuiUtils.readInt("Masukkan ID Txn untuk kembalikan: ");
                         loanService.processReturn(returnId, (com.library.domain.entities.Librarian) librarian);
-                        TuiUtils.printSuccess("Book returned successfully. Fines (if any) calculated.");
+                        TuiUtils.printSuccess("Buku berhasil dikembalikan. Denda (jika ada) telah dihitung.");
                         TuiUtils.waitForEnter();
                         break;
                     case "A":
-                        int fineId = TuiUtils.readInt("Enter Txn ID to pay fine: ");
+                        int fineId = TuiUtils.readInt("Masukkan ID Txn untuk bayar denda: ");
                         loanService.processFinePayment(fineId, (com.library.domain.entities.Librarian) librarian);
-                        TuiUtils.printSuccess("Fine marked as PAID.");
+                        TuiUtils.printSuccess("Denda ditandai sebagai LUNAS.");
                         TuiUtils.waitForEnter();
                         break;
                     case "Q":
                         return;
                     default:
-                        TuiUtils.printError("Invalid command.");
+                        TuiUtils.printError("Perintah tidak valid.");
                         TuiUtils.waitForEnter();
                 }
             } catch (Exception e) {
