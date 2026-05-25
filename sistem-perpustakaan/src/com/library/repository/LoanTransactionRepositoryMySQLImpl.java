@@ -286,7 +286,7 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
     @Override
     public List<LoanTransaction> findByStatusAndScheduledPickupDate(LoanStatus status, LocalDate date) {
         List<LoanTransaction> list = new ArrayList<>();
-        String sql = getBaseSelectQuery() + " WHERE l.status = ? AND l.scheduled_pickup_date = ? ORDER BY l.request_date ASC";
+        String sql = getBaseSelectQuery() + " WHERE l.status = ? AND l.scheduled_pickup_date <= ? ORDER BY l.request_date ASC";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -331,7 +331,7 @@ public class LoanTransactionRepositoryMySQLImpl implements ILoanTransactionRepos
     @Override
     public List<LoanTransaction> findExpiredWaitingPickup(LocalDate cutoffDate) {
         List<LoanTransaction> list = new ArrayList<>();
-        String sql = getBaseSelectQuery() + " WHERE l.status = 'WAITING_PICKUP' AND l.scheduled_pickup_date < ? ORDER BY l.scheduled_pickup_date ASC";
+        String sql = getBaseSelectQuery() + " WHERE l.status IN ('REQUESTED', 'WAITING_PICKUP') AND l.scheduled_pickup_date <= ? ORDER BY l.scheduled_pickup_date ASC";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

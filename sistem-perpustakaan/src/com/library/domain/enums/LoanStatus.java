@@ -10,7 +10,7 @@ package com.library.domain.enums;
  */
 public enum LoanStatus {
     REQUESTED,     // Pinjaman baru dibuat, menunggu jadwal pickup
-    WAITING_PICKUP, // Sudah masuk jadwal pickup, menunggu member datang
+    WAITING_PICKUP,// Sudah masuk jadwal pickup, menunggu member datang
     ACTIVE,        // Sudah dipinjam, sedang dipakai
     OVERDUE,       // Sudah melewati due date tapi belum dikembalikan
     RETURNED,      // Sudah dikembalikan
