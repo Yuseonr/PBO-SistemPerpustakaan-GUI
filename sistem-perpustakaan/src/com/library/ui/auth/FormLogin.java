@@ -227,7 +227,7 @@ public class FormLogin extends javax.swing.JFrame {
             } else if (loggedInUser.getRole().equals(UserRole.LIBRARIAN)) {
                 new DashboardLibrarian(loggedInUser).setVisible(true);
             } else if (loggedInUser.getRole().equals(UserRole.ADMIN)) {
-                new AdminDashboardForm().setVisible(true);
+                new AdminDashboardForm(loggedInUser).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Role tidak ditemukan",

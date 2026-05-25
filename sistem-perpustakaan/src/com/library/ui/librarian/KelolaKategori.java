@@ -4,6 +4,12 @@
  */
 package com.library.ui.librarian;
 
+import com.library.domain.entities.User;
+import com.library.domain.entities.Category;
+import com.library.repository.CategoryRepositoryMySQLImpl;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author vert
@@ -11,14 +17,30 @@ package com.library.ui.librarian;
 public class KelolaKategori extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(KelolaKategori.class.getName());
-
+    private User loggedInUser;
+    private List<Category> categoryList;
+    private CategoryRepositoryMySQLImpl catRepo = new CategoryRepositoryMySQLImpl();
     /**
      * Creates new form KelolaKategori
      */
-    public KelolaKategori() {
+    public KelolaKategori(User user) {
+        this.loggedInUser = user;
         initComponents();
+        loadDataKategori(); // Panggil saat form dibuka
     }
-
+    private void loadDataKategori() {
+        categoryList = catRepo.findAll();
+        DefaultTableModel model = (DefaultTableModel) jTableKategori.getModel();
+        model.setRowCount(0);
+        int no = 1;
+        for (Category cat : categoryList) {
+            model.addRow(new Object[]{
+                no++,
+                cat.getName(),
+                cat.getDescription()
+            });
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,7 +50,6 @@ public class KelolaKategori extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jLabelJudul = new javax.swing.JLabel();
         jLabelDeskripsi = new javax.swing.JLabel();
         jLabelNama = new javax.swing.JLabel();
@@ -39,24 +60,18 @@ public class KelolaKategori extends javax.swing.JFrame {
         jButtonHapus = new javax.swing.JButton();
         jButtonPerbarui = new javax.swing.JButton();
         jButtonTambah = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButtonDashboard = new javax.swing.JButton();
+        jButtonKelolaBuku = new javax.swing.JButton();
+        jButtonLogOut = new javax.swing.JButton();
+        jButtonKelolaKategori = new javax.swing.JButton();
+        jButtonPinjamOffline = new javax.swing.JButton();
+        jButtonPengembalianBuku = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
+        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
-
-        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
-        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 235, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
-        );
 
         jLabelJudul.setFont(new java.awt.Font("Sylfaen", 1, 36)); // NOI18N
         jLabelJudul.setText("Kelola Kategori");
@@ -131,6 +146,111 @@ public class KelolaKategori extends javax.swing.JFrame {
             }
         });
 
+        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
+        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
+
+        jButtonDashboard.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonDashboard.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonDashboard.setText("DASHBOARD");
+        jButtonDashboard.setBorderPainted(false);
+        jButtonDashboard.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDashboardActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaBuku.setText("BUKU");
+        jButtonKelolaBuku.setBorderPainted(false);
+        jButtonKelolaBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaBukuActionPerformed(evt);
+            }
+        });
+
+        jButtonLogOut.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonLogOut.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonLogOut.setText("log out");
+        jButtonLogOut.setBorderPainted(false);
+        jButtonLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLogOutActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaKategori.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaKategori.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaKategori.setText("KATEGORI");
+        jButtonKelolaKategori.setBorderPainted(false);
+        jButtonKelolaKategori.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaKategori.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaKategoriActionPerformed(evt);
+            }
+        });
+
+        jButtonPinjamOffline.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPinjamOffline.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPinjamOffline.setText("PINJAM");
+        jButtonPinjamOffline.setBorderPainted(false);
+        jButtonPinjamOffline.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPinjamOffline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPinjamOfflineActionPerformed(evt);
+            }
+        });
+
+        jButtonPengembalianBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPengembalianBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPengembalianBuku.setText("RETUR");
+        jButtonPengembalianBuku.setBorderPainted(false);
+        jButtonPengembalianBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPengembalianBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPengembalianBukuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(jButtonLogOut)))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(138, 138, 138)
+                .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addComponent(jButtonLogOut)
+                .addGap(33, 33, 33))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -161,9 +281,6 @@ public class KelolaKategori extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jLabelJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -179,9 +296,12 @@ public class KelolaKategori extends javax.swing.JFrame {
                     .addComponent(jButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonPerbarui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(jScrollPaneKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
         pack();
@@ -198,84 +318,109 @@ public class KelolaKategori extends javax.swing.JFrame {
     private void jButtonTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTambahActionPerformed
         String nama = jTextFieldNama.getText();
         String deskripsi = jTextFieldDeskripsi.getText();
-
-        // Validasi input kosong
         if (nama.isEmpty() || deskripsi.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Nama dan Deskripsi tidak boleh kosong!");
+            JOptionPane.showMessageDialog(this, "Nama dan Deskripsi tidak boleh kosong!");
             return;
         }
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableKategori.getModel();
-
-        // Nomor otomatis berdasarkan jumlah baris
-        int no = model.getRowCount() + 1;
-
-        // Tambah baris ke tabel
-        model.addRow(new Object[]{no, nama, deskripsi});
-
-        // Kosongkan form input
+        Category newCat = new Category(nama, deskripsi);
+        if (loggedInUser != null) {
+            newCat.setCreatedBy(loggedInUser.getName()); // Menyimpan siapa yang buat
+        }
+        
+        catRepo.save(newCat);
+        JOptionPane.showMessageDialog(this, "Kategori berhasil ditambahkan!");
+        
+        // Bersihkan dan reload
         jTextFieldNama.setText("");
         jTextFieldDeskripsi.setText("");
+        loadDataKategori();
     }//GEN-LAST:event_jButtonTambahActionPerformed
 
     private void jTableKategoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableKategoriMouseClicked
         int barisTerpilih = jTableKategori.getSelectedRow();
-
         if (barisTerpilih != -1) {
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableKategori.getModel();
-
-            // Ambil data dari kolom ke-1 (Nama) dan ke-2 (Deskripsi), kolom ke-0 adalah No
-            jTextFieldNama.setText(model.getValueAt(barisTerpilih, 1).toString());
-            jTextFieldDeskripsi.setText(model.getValueAt(barisTerpilih, 2).toString());
+            Category selectedCat = categoryList.get(barisTerpilih);
+            jTextFieldNama.setText(selectedCat.getName());
+            jTextFieldDeskripsi.setText(selectedCat.getDescription());
         }
     }//GEN-LAST:event_jTableKategoriMouseClicked
 
     private void jButtonPerbaruiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPerbaruiActionPerformed
         int barisTerpilih = jTableKategori.getSelectedRow();
-
-        // Cek apakah ada baris yang dipilih
         if (barisTerpilih == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih data di tabel terlebih dahulu!");
+            JOptionPane.showMessageDialog(this, "Silakan pilih data kategori dari tabel terlebih dahulu!");
             return;
         }
-
         String namaBaru = jTextFieldNama.getText();
         String deskripsiBaru = jTextFieldDeskripsi.getText();
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableKategori.getModel();
-
-        // Timpa data lama dengan data baru
-        model.setValueAt(namaBaru, barisTerpilih, 1);
-        model.setValueAt(deskripsiBaru, barisTerpilih, 2);
-
-        // Bersihkan form dan hilangkan pilihan tabel
+        
+        if (namaBaru.isEmpty() || deskripsiBaru.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama dan Deskripsi tidak boleh kosong!");
+            return;
+        }
+        Category selectedCat = categoryList.get(barisTerpilih);
+        selectedCat.setName(namaBaru);
+        selectedCat.setDescription(deskripsiBaru);
+        catRepo.update(selectedCat);
+        JOptionPane.showMessageDialog(this, "Kategori berhasil diperbarui!");
         jTextFieldNama.setText("");
         jTextFieldDeskripsi.setText("");
-        jTableKategori.clearSelection();
+        loadDataKategori();
     }//GEN-LAST:event_jButtonPerbaruiActionPerformed
 
     private void jButtonHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHapusActionPerformed
         int barisTerpilih = jTableKategori.getSelectedRow();
-
         if (barisTerpilih == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih data di tabel yang ingin dihapus!");
+            JOptionPane.showMessageDialog(this, "Silakan pilih data kategori yang ingin dihapus!");
             return;
         }
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableKategori.getModel();
-
-        // Hapus baris yang dipilih
-        model.removeRow(barisTerpilih);
-
-        // Update ulang penomoran agar urut kembali setelah ada yang dihapus
-        for (int i = 0; i < model.getRowCount(); i++) {
-            model.setValueAt(i + 1, i, 0);
+        Category selectedCat = categoryList.get(barisTerpilih);
+        int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menonaktifkan kategori ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // Sesuai kode repomu, hapus = set status active ke false
+                catRepo.delete(selectedCat.getId()); 
+                JOptionPane.showMessageDialog(this, "Kategori berhasil dinonaktifkan!");
+                
+                jTextFieldNama.setText("");
+                jTextFieldDeskripsi.setText("");
+                loadDataKategori();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat menghapus kategori.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-        // Bersihkan form
-        jTextFieldNama.setText("");
-        jTextFieldDeskripsi.setText("");
     }//GEN-LAST:event_jButtonHapusActionPerformed
+
+    private void jButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDashboardActionPerformed
+        new DashboardLibrarian(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonDashboardActionPerformed
+
+    private void jButtonKelolaBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaBukuActionPerformed
+        new KelolaBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaBukuActionPerformed
+
+    private void jButtonLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogOutActionPerformed
+        new com.library.ui.auth.FormLogin().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonLogOutActionPerformed
+
+    private void jButtonKelolaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaKategoriActionPerformed
+        new KelolaKategori(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaKategoriActionPerformed
+
+    private void jButtonPinjamOfflineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPinjamOfflineActionPerformed
+        new PeminjamanBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPinjamOfflineActionPerformed
+
+    private void jButtonPengembalianBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPengembalianBukuActionPerformed
+        new PengembalianBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPengembalianBukuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -299,12 +444,18 @@ public class KelolaKategori extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new KelolaKategori().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new KelolaKategori(null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDashboard;
     private javax.swing.JButton jButtonHapus;
+    private javax.swing.JButton jButtonKelolaBuku;
+    private javax.swing.JButton jButtonKelolaKategori;
+    private javax.swing.JButton jButtonLogOut;
+    private javax.swing.JButton jButtonPengembalianBuku;
     private javax.swing.JButton jButtonPerbarui;
+    private javax.swing.JButton jButtonPinjamOffline;
     private javax.swing.JButton jButtonTambah;
     private javax.swing.JLabel jLabelDeskripsi;
     private javax.swing.JLabel jLabelJudul;

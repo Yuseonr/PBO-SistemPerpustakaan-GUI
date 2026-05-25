@@ -4,6 +4,17 @@
  */
 package com.library.ui.librarian;
 
+import com.library.domain.entities.User;
+import com.library.domain.entities.BookCopy;
+import com.library.domain.entities.Librarian;
+import com.library.domain.entities.Member;
+import com.library.repository.BookCopyRepositoryMySQLImpl;
+import com.library.repository.LibraryConfigRepositoryMySQLImpl;
+import com.library.repository.LoanTransactionRepositoryMySQLImpl;
+import com.library.repository.UserRepositoryMySQLImpl;
+import com.library.service.LoanService;
+import java.time.LocalDate;
+import javax.swing.JOptionPane;
 /**
  *
  * @author vert
@@ -11,12 +22,16 @@ package com.library.ui.librarian;
 public class PeminjamanBuku extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PeminjamanBuku.class.getName());
-
+    private User loggedInUser;
     /**
      * Creates new form PeminjamanBuku
      */
-    public PeminjamanBuku() {
+    public PeminjamanBuku(User user) {
+        this.loggedInUser = user;
         initComponents();
+        // Set tanggal hari ini dan disable inputannya
+        jTextField3.setText(LocalDate.now().toString());
+        jTextField3.setEditable(false);
     }
 
     /**
@@ -28,7 +43,6 @@ public class PeminjamanBuku extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jLabelJudul = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -37,24 +51,18 @@ public class PeminjamanBuku extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButtonDashboard = new javax.swing.JButton();
+        jButtonKelolaBuku = new javax.swing.JButton();
+        jButtonLogOut = new javax.swing.JButton();
+        jButtonKelolaKategori = new javax.swing.JButton();
+        jButtonPinjamOffline = new javax.swing.JButton();
+        jButtonPengembalianBuku = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
+        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
-
-        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
-        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 235, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
-        );
 
         jLabelJudul.setFont(new java.awt.Font("Sylfaen", 1, 36)); // NOI18N
         jLabelJudul.setText("Peminjaman Buku");
@@ -63,10 +71,10 @@ public class PeminjamanBuku extends javax.swing.JFrame {
         jLabel1.setText("Tanggal Pinjam");
 
         jLabel2.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
-        jLabel2.setText("Member");
+        jLabel2.setText("Email Member");
 
         jLabel3.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
-        jLabel3.setText("Buku");
+        jLabel3.setText("ID Buku");
 
         jTextField1.setPreferredSize(new java.awt.Dimension(400, 32));
 
@@ -83,6 +91,111 @@ public class PeminjamanBuku extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+
+        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
+        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
+
+        jButtonDashboard.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonDashboard.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonDashboard.setText("DASHBOARD");
+        jButtonDashboard.setBorderPainted(false);
+        jButtonDashboard.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDashboardActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaBuku.setText("BUKU");
+        jButtonKelolaBuku.setBorderPainted(false);
+        jButtonKelolaBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaBukuActionPerformed(evt);
+            }
+        });
+
+        jButtonLogOut.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonLogOut.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonLogOut.setText("log out");
+        jButtonLogOut.setBorderPainted(false);
+        jButtonLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLogOutActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaKategori.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaKategori.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaKategori.setText("KATEGORI");
+        jButtonKelolaKategori.setBorderPainted(false);
+        jButtonKelolaKategori.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaKategori.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaKategoriActionPerformed(evt);
+            }
+        });
+
+        jButtonPinjamOffline.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPinjamOffline.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPinjamOffline.setText("PINJAM");
+        jButtonPinjamOffline.setBorderPainted(false);
+        jButtonPinjamOffline.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPinjamOffline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPinjamOfflineActionPerformed(evt);
+            }
+        });
+
+        jButtonPengembalianBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPengembalianBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPengembalianBuku.setText("RETUR");
+        jButtonPengembalianBuku.setBorderPainted(false);
+        jButtonPengembalianBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPengembalianBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPengembalianBukuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(jButtonLogOut)))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(138, 138, 138)
+                .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addComponent(jButtonLogOut)
+                .addGap(33, 33, 33))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -109,9 +222,6 @@ public class PeminjamanBuku extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(jLabelJudul)
                 .addGap(112, 112, 112)
@@ -128,15 +238,91 @@ public class PeminjamanBuku extends javax.swing.JFrame {
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(99, 99, 99)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(244, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // jTextField2 digunakan untuk Email Member, jTextField1 untuk Copy ID
+        String emailMember = jTextField2.getText();
+        String bookCopyIdStr = jTextField1.getText();
+        if (emailMember.isEmpty() || bookCopyIdStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email Member dan ID Buku harus diisi!");
+            return;
+        }
+        try {
+            // Cari Member berdasarkan Email
+            UserRepositoryMySQLImpl userRepo = new UserRepositoryMySQLImpl();
+            User foundUser = userRepo.findByEmail(emailMember);
+            
+            if (foundUser == null || !(foundUser instanceof Member)) {
+                JOptionPane.showMessageDialog(this, "Member dengan email tersebut tidak ditemukan!");
+                return;
+            }
+            Member member = (Member) foundUser;
+            // Cari Buku Fisik berdasarkan ID
+            int copyId = Integer.parseInt(bookCopyIdStr);
+            BookCopyRepositoryMySQLImpl copyRepo = new BookCopyRepositoryMySQLImpl();
+            BookCopy copy = copyRepo.findById(copyId);
+            if (copy == null) {
+                JOptionPane.showMessageDialog(this, "Buku fisik (Copy ID) tidak ditemukan!");
+                return;
+            }
+            // Inisialisasi Service dan proses peminjaman offline
+            LoanService loanService = new LoanService(
+                new LoanTransactionRepositoryMySQLImpl(),
+                copyRepo,
+                new LibraryConfigRepositoryMySQLImpl().findById(1) // ID config default = 1
+            );
+            // Buat peminjaman!
+            loanService.createOfflineLoan(member, copy, (Librarian) loggedInUser);
+            
+            JOptionPane.showMessageDialog(this, "Peminjaman Offline berhasil! Buku siap diserahkan.");
+            
+            // Bersihkan form input untuk transaksi berikutnya
+            jTextField2.setText("");
+            jTextField1.setText("");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID Buku (Buku) harus berupa angka!", "Error Input", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal membuat peminjaman: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDashboardActionPerformed
+        new DashboardLibrarian(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonDashboardActionPerformed
+
+    private void jButtonKelolaBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaBukuActionPerformed
+        new KelolaBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaBukuActionPerformed
+
+    private void jButtonLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogOutActionPerformed
+        new com.library.ui.auth.FormLogin().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonLogOutActionPerformed
+
+    private void jButtonKelolaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaKategoriActionPerformed
+        new KelolaKategori(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaKategoriActionPerformed
+
+    private void jButtonPinjamOfflineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPinjamOfflineActionPerformed
+        new PeminjamanBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPinjamOfflineActionPerformed
+
+    private void jButtonPengembalianBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPengembalianBukuActionPerformed
+        new PengembalianBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPengembalianBukuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,11 +346,17 @@ public class PeminjamanBuku extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new PeminjamanBuku().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new PeminjamanBuku(null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonDashboard;
+    private javax.swing.JButton jButtonKelolaBuku;
+    private javax.swing.JButton jButtonKelolaKategori;
+    private javax.swing.JButton jButtonLogOut;
+    private javax.swing.JButton jButtonPengembalianBuku;
+    private javax.swing.JButton jButtonPinjamOffline;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

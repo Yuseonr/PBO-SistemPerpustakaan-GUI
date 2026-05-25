@@ -4,6 +4,14 @@
  */
 package com.library.ui.librarian;
 
+import com.library.domain.entities.User;
+import com.library.domain.entities.BookTitle;
+import com.library.domain.entities.Category;
+import com.library.repository.BookTitleRepositoryMySQLImpl;
+import com.library.repository.CategoryRepositoryMySQLImpl;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author vert
@@ -11,14 +19,44 @@ package com.library.ui.librarian;
 public class KelolaBuku extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(KelolaBuku.class.getName());
-
+    private User loggedInUser;
+    private List<BookTitle> bookList;
+    private List<Category> categoryList;
+    private BookTitleRepositoryMySQLImpl bookRepo = new BookTitleRepositoryMySQLImpl();
+    private CategoryRepositoryMySQLImpl catRepo = new CategoryRepositoryMySQLImpl();
     /**
      * Creates new form KelolaKategori
      */
-    public KelolaBuku() {
+    public KelolaBuku(User user) {
+        this.loggedInUser = user;
         initComponents();
+        loadCategories(); // Muat data kategori untuk jComboBox
+        loadDataBuku();   // Muat daftar buku ke jTable
     }
 
+    private void loadCategories() {
+        categoryList = catRepo.findAll();
+        jComboBoxCategories.removeAllItems();
+        for (Category cat : categoryList) {
+            jComboBoxCategories.addItem(cat.getName());
+        }
+    }
+    private void loadDataBuku() {
+        bookList = bookRepo.findAll();
+        DefaultTableModel model = (DefaultTableModel) jTableBuku.getModel();
+        model.setRowCount(0);
+        int no = 1;
+        for (BookTitle book : bookList) {
+            model.addRow(new Object[]{
+                no++,
+                book.getIsbn(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublisher(),
+                book.getDescription()
+            });
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,7 +66,6 @@ public class KelolaBuku extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jLabelJudul = new javax.swing.JLabel();
         jLabelPenulis = new javax.swing.JLabel();
         jLabelJudulBuku = new javax.swing.JLabel();
@@ -44,26 +81,21 @@ public class KelolaBuku extends javax.swing.JFrame {
         jLabelDeskripsi = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaDeskripsi = new javax.swing.JTextArea();
-        jButtonCover = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBoxCategories = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
+        jButtonDashboard = new javax.swing.JButton();
+        jButtonKelolaBuku = new javax.swing.JButton();
+        jButtonLogOut = new javax.swing.JButton();
+        jButtonKelolaKategori = new javax.swing.JButton();
+        jButtonPinjamOffline = new javax.swing.JButton();
+        jButtonPengembalianBuku = new javax.swing.JButton();
+        jTextFieldPublisher = new javax.swing.JTextField();
+        jLabelPublisher = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
+        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
-
-        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
-        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 235, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
-        );
 
         jLabelJudul.setFont(new java.awt.Font("Sylfaen", 1, 36)); // NOI18N
         jLabelJudul.setText("Kelola Buku");
@@ -81,9 +113,10 @@ public class KelolaBuku extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No", "Nama Kategori", "Deskripsi"
+                "No", "ISBN", "Judul Buku", "Penulis", "Penerbit", "Deskripsi"
             }
         ));
+        jTableBuku.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jTableBuku.setPreferredSize(new java.awt.Dimension(900, 600));
         jTableBuku.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -91,6 +124,14 @@ public class KelolaBuku extends javax.swing.JFrame {
             }
         });
         jScrollPaneBuku.setViewportView(jTableBuku);
+        if (jTableBuku.getColumnModel().getColumnCount() > 0) {
+            jTableBuku.getColumnModel().getColumn(0).setPreferredWidth(50);
+            jTableBuku.getColumnModel().getColumn(1).setPreferredWidth(200);
+            jTableBuku.getColumnModel().getColumn(2).setPreferredWidth(200);
+            jTableBuku.getColumnModel().getColumn(3).setPreferredWidth(200);
+            jTableBuku.getColumnModel().getColumn(4).setPreferredWidth(200);
+            jTableBuku.getColumnModel().getColumn(5).setPreferredWidth(350);
+        }
 
         jTextFieldJudulBuku.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
         jTextFieldJudulBuku.setPreferredSize(new java.awt.Dimension(300, 32));
@@ -159,14 +200,119 @@ public class KelolaBuku extends javax.swing.JFrame {
         jTextAreaDeskripsi.setRows(5);
         jScrollPane1.setViewportView(jTextAreaDeskripsi);
 
-        jButtonCover.setBackground(new java.awt.Color(204, 204, 204));
-        jButtonCover.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jButtonCover.setText("Input cover");
-        jButtonCover.setPreferredSize(new java.awt.Dimension(100, 32));
+        jComboBoxCategories.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
+        jComboBoxCategories.setPreferredSize(new java.awt.Dimension(300, 32));
 
-        jComboBox1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(200, 32));
+        jPanel1.setBackground(new java.awt.Color(124, 173, 186));
+        jPanel1.setPreferredSize(new java.awt.Dimension(235, 720));
+
+        jButtonDashboard.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonDashboard.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonDashboard.setText("DASHBOARD");
+        jButtonDashboard.setBorderPainted(false);
+        jButtonDashboard.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDashboardActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaBuku.setText("BUKU");
+        jButtonKelolaBuku.setBorderPainted(false);
+        jButtonKelolaBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaBukuActionPerformed(evt);
+            }
+        });
+
+        jButtonLogOut.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonLogOut.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonLogOut.setText("log out");
+        jButtonLogOut.setBorderPainted(false);
+        jButtonLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLogOutActionPerformed(evt);
+            }
+        });
+
+        jButtonKelolaKategori.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonKelolaKategori.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaKategori.setText("KATEGORI");
+        jButtonKelolaKategori.setBorderPainted(false);
+        jButtonKelolaKategori.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonKelolaKategori.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaKategoriActionPerformed(evt);
+            }
+        });
+
+        jButtonPinjamOffline.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPinjamOffline.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPinjamOffline.setText("PINJAM");
+        jButtonPinjamOffline.setBorderPainted(false);
+        jButtonPinjamOffline.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPinjamOffline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPinjamOfflineActionPerformed(evt);
+            }
+        });
+
+        jButtonPengembalianBuku.setBackground(new java.awt.Color(63, 108, 120));
+        jButtonPengembalianBuku.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonPengembalianBuku.setText("RETUR");
+        jButtonPengembalianBuku.setBorderPainted(false);
+        jButtonPengembalianBuku.setPreferredSize(new java.awt.Dimension(180, 38));
+        jButtonPengembalianBuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPengembalianBukuActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(jButtonLogOut)))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(138, 138, 138)
+                .addComponent(jButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addComponent(jButtonLogOut)
+                .addGap(33, 33, 33))
+        );
+
+        jTextFieldPublisher.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
+        jTextFieldPublisher.setPreferredSize(new java.awt.Dimension(200, 31));
+
+        jLabelPublisher.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
+        jLabelPublisher.setText("Publisher");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -202,21 +348,20 @@ public class KelolaBuku extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTextFieldISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(40, 40, 40)
-                        .addComponent(jLabelDeskripsi)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabelDeskripsi)
+                            .addComponent(jLabelPublisher))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonCover, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextFieldPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBoxCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jLabelJudul)
@@ -239,16 +384,20 @@ public class KelolaBuku extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonCover, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTextFieldPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxCategories, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelPublisher))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonPerbarui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(jScrollPaneBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -263,90 +412,140 @@ public class KelolaBuku extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldISBNActionPerformed
 
     private void jButtonTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTambahActionPerformed
-        String nama = jTextFieldJudulBuku.getText();
-        String deskripsi = jTextFieldISBN.getText();
-
-        // Validasi input kosong
-        if (nama.isEmpty() || deskripsi.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Nama dan Deskripsi tidak boleh kosong!");
+        String isbn = jTextFieldISBN.getText();
+        String judul = jTextFieldJudulBuku.getText();
+        String penulis = jTextFieldPenulis.getText();
+        String penerbit = jTextFieldPublisher.getText();
+        String deskripsi = jTextAreaDeskripsi.getText();
+        int catIndex = jComboBoxCategories.getSelectedIndex();
+        if (isbn.isEmpty() || judul.isEmpty() || penulis.isEmpty() || penerbit.isEmpty() || deskripsi.isEmpty() || catIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
             return;
         }
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableBuku.getModel();
-
-        // Nomor otomatis berdasarkan jumlah baris
-        int no = model.getRowCount() + 1;
-
-        // Tambah baris ke tabel
-        model.addRow(new Object[]{no, nama, deskripsi});
-
-        // Kosongkan form input
-        jTextFieldJudulBuku.setText("");
+        Category selectedCat = categoryList.get(catIndex);
+        BookTitle newBook = new BookTitle(judul, penulis, penerbit, isbn, deskripsi, selectedCat);
+        
+        bookRepo.save(newBook);
+        JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan!");
+        
+        // Reset form & reload data
         jTextFieldISBN.setText("");
+        jTextFieldJudulBuku.setText("");
+        jTextFieldPenulis.setText("");
+        jTextFieldPublisher.setText("");
+        jTextAreaDeskripsi.setText("");
+        loadDataBuku();
     }//GEN-LAST:event_jButtonTambahActionPerformed
 
     private void jTableBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableBukuMouseClicked
         int barisTerpilih = jTableBuku.getSelectedRow();
-
         if (barisTerpilih != -1) {
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableBuku.getModel();
-
-            // Ambil data dari kolom ke-1 (Nama) dan ke-2 (Deskripsi), kolom ke-0 adalah No
-            jTextFieldJudulBuku.setText(model.getValueAt(barisTerpilih, 1).toString());
-            jTextFieldISBN.setText(model.getValueAt(barisTerpilih, 2).toString());
+            BookTitle selectedBook = bookList.get(barisTerpilih);
+            jTextFieldISBN.setText(selectedBook.getIsbn());
+            jTextFieldJudulBuku.setText(selectedBook.getTitle());
+            jTextFieldPenulis.setText(selectedBook.getAuthor());
+            jTextFieldPublisher.setText(selectedBook.getPublisher());
+            jTextAreaDeskripsi.setText(selectedBook.getDescription());
+            
+            // Set combobox kategori sesuai ID
+            for (int i = 0; i < categoryList.size(); i++) {
+                if (categoryList.get(i).getId().equals(selectedBook.getCategory().getId())) {
+                    jComboBoxCategories.setSelectedIndex(i);
+                    break;
+                }
+            }
         }
     }//GEN-LAST:event_jTableBukuMouseClicked
 
     private void jButtonPerbaruiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPerbaruiActionPerformed
         int barisTerpilih = jTableBuku.getSelectedRow();
-
-        // Cek apakah ada baris yang dipilih
         if (barisTerpilih == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih data di tabel terlebih dahulu!");
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin diperbarui dari tabel!");
             return;
         }
-
-        String namaBaru = jTextFieldJudulBuku.getText();
-        String deskripsiBaru = jTextFieldISBN.getText();
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableBuku.getModel();
-
-        // Timpa data lama dengan data baru
-        model.setValueAt(namaBaru, barisTerpilih, 1);
-        model.setValueAt(deskripsiBaru, barisTerpilih, 2);
-
-        // Bersihkan form dan hilangkan pilihan tabel
-        jTextFieldJudulBuku.setText("");
+        BookTitle selectedBook = bookList.get(barisTerpilih);
+        int catIndex = jComboBoxCategories.getSelectedIndex();
+        
+        if (catIndex != -1) {
+            selectedBook.setCategory(categoryList.get(catIndex));
+        }
+        selectedBook.setIsbn(jTextFieldISBN.getText());
+        selectedBook.setTitle(jTextFieldJudulBuku.getText());
+        selectedBook.setAuthor(jTextFieldPenulis.getText());
+        selectedBook.setPublisher(jTextFieldPublisher.getText());
+        selectedBook.setDescription(jTextAreaDeskripsi.getText());
+        bookRepo.update(selectedBook);
+        JOptionPane.showMessageDialog(this, "Buku berhasil diperbarui!");
+        
+        // Reset form & reload
         jTextFieldISBN.setText("");
-        jTableBuku.clearSelection();
+        jTextFieldJudulBuku.setText("");
+        jTextFieldPenulis.setText("");
+        jTextFieldPublisher.setText("");
+        jTextAreaDeskripsi.setText("");
+        loadDataBuku();
     }//GEN-LAST:event_jButtonPerbaruiActionPerformed
 
     private void jButtonHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHapusActionPerformed
         int barisTerpilih = jTableBuku.getSelectedRow();
-
         if (barisTerpilih == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Silakan pilih data di tabel yang ingin dihapus!");
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus dari tabel!");
             return;
         }
-
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTableBuku.getModel();
-
-        // Hapus baris yang dipilih
-        model.removeRow(barisTerpilih);
-
-        // Update ulang penomoran agar urut kembali setelah ada yang dihapus
-        for (int i = 0; i < model.getRowCount(); i++) {
-            model.setValueAt(i + 1, i, 0);
+        BookTitle selectedBook = bookList.get(barisTerpilih);
+        int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus buku ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                bookRepo.delete(selectedBook.getId());
+                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus!");
+                
+                // Reset form & reload
+                jTextFieldISBN.setText("");
+                jTextFieldJudulBuku.setText("");
+                jTextFieldPenulis.setText("");
+                jTextFieldPublisher.setText("");
+                jTextAreaDeskripsi.setText("");
+                loadDataBuku();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Buku tidak bisa dihapus, mungkin karena masih ada transaksi atau salinan copy terkait.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-        // Bersihkan form
-        jTextFieldJudulBuku.setText("");
-        jTextFieldISBN.setText("");
     }//GEN-LAST:event_jButtonHapusActionPerformed
 
     private void jTextFieldPenulisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldPenulisActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldPenulisActionPerformed
+
+    private void jButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDashboardActionPerformed
+        new DashboardLibrarian(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonDashboardActionPerformed
+
+    private void jButtonKelolaBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaBukuActionPerformed
+        new KelolaBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaBukuActionPerformed
+
+    private void jButtonLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogOutActionPerformed
+        new com.library.ui.auth.FormLogin().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonLogOutActionPerformed
+
+    private void jButtonKelolaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaKategoriActionPerformed
+        new KelolaKategori(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaKategoriActionPerformed
+
+    private void jButtonPinjamOfflineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPinjamOfflineActionPerformed
+        new PeminjamanBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPinjamOfflineActionPerformed
+
+    private void jButtonPengembalianBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPengembalianBukuActionPerformed
+        new PengembalianBuku(loggedInUser).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonPengembalianBukuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -370,20 +569,26 @@ public class KelolaBuku extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new KelolaBuku().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new KelolaBuku(null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonCover;
+    private javax.swing.JButton jButtonDashboard;
     private javax.swing.JButton jButtonHapus;
+    private javax.swing.JButton jButtonKelolaBuku;
+    private javax.swing.JButton jButtonKelolaKategori;
+    private javax.swing.JButton jButtonLogOut;
+    private javax.swing.JButton jButtonPengembalianBuku;
     private javax.swing.JButton jButtonPerbarui;
+    private javax.swing.JButton jButtonPinjamOffline;
     private javax.swing.JButton jButtonTambah;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBoxCategories;
     private javax.swing.JLabel jLabelDeskripsi;
     private javax.swing.JLabel jLabelISBN;
     private javax.swing.JLabel jLabelJudul;
     private javax.swing.JLabel jLabelJudulBuku;
     private javax.swing.JLabel jLabelPenulis;
+    private javax.swing.JLabel jLabelPublisher;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPaneBuku;
@@ -392,5 +597,6 @@ public class KelolaBuku extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldISBN;
     private javax.swing.JTextField jTextFieldJudulBuku;
     private javax.swing.JTextField jTextFieldPenulis;
+    private javax.swing.JTextField jTextFieldPublisher;
     // End of variables declaration//GEN-END:variables
 }

@@ -96,7 +96,6 @@ public class DashboardLibrarian extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
-        setPreferredSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(950, 400));
@@ -404,12 +403,12 @@ public class DashboardLibrarian extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDashboardActionPerformed
-        new DashboardLibrarian(loggedInUser).setVisible(true);
-        this.dispose();
+        // refresh data
+        this.loadDashboardData();
     }//GEN-LAST:event_jButtonDashboardActionPerformed
 
     private void jButtonKelolaBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaBukuActionPerformed
-        new KelolaBuku().setVisible(true);
+        new KelolaBuku(loggedInUser).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonKelolaBukuActionPerformed
 
@@ -419,17 +418,17 @@ public class DashboardLibrarian extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonLogOutActionPerformed
 
     private void jButtonKelolaKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaKategoriActionPerformed
-        new KelolaKategori().setVisible(true);
+        new KelolaKategori(loggedInUser).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonKelolaKategoriActionPerformed
 
     private void jButtonPinjamOfflineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPinjamOfflineActionPerformed
-        new PeminjamanBuku().setVisible(true);
+        new PeminjamanBuku(loggedInUser).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonPinjamOfflineActionPerformed
 
     private void jButtonPengembalianBukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPengembalianBukuActionPerformed
-        new PengembalianBuku().setVisible(true);
+        new PengembalianBuku(loggedInUser).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonPengembalianBukuActionPerformed
 
