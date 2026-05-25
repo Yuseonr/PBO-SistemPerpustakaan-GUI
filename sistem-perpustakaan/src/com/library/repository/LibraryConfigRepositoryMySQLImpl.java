@@ -105,7 +105,6 @@ public class LibraryConfigRepositoryMySQLImpl implements ILibraryConfigRepositor
         config.setMaxBorrowLimit(rs.getInt("max_borrow_limit"));
         config.setMaxReservationDaysAhead(rs.getInt("max_reservation_days_ahead"));
         config.setPickupWindowDays(rs.getInt("pickup_window_days"));
-        
         config.setLibraryName(rs.getString("library_name"));
         config.setLibraryDescription(rs.getString("library_description"));
         

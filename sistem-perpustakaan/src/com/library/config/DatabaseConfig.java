@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConfig {
     // Konfigurasi koneksi database
-    private static final String URL = "jdbc:mysql://localhost:3307/lib_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3307/myperpus?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "Tambahkan";
 
