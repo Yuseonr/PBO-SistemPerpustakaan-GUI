@@ -43,10 +43,18 @@ public class LibraryConfigRepositoryMySQLImpl implements ILibraryConfigRepositor
 
     @Override
     public void update(LibraryConfig entity) {
-        String sql = "UPDATE library_config SET fine_per_day = ?, max_borrow_days = ?, "
-                + "max_borrow_limit = ?, max_reservation_days_ahead = ?, pickup_window_days = ?, "
-                + "library_name = ?, library_description = ?"
-                + " WHERE id = 1"; 
+        String sql = "INSERT INTO library_config (id, fine_per_day, max_borrow_days, "
+                + "max_borrow_limit, max_reservation_days_ahead, pickup_window_days, "
+                + "library_name, library_description) "
+                + "VALUES (1, ?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "fine_per_day = VALUES(fine_per_day), "
+                + "max_borrow_days = VALUES(max_borrow_days), "
+                + "max_borrow_limit = VALUES(max_borrow_limit), "
+                + "max_reservation_days_ahead = VALUES(max_reservation_days_ahead), "
+                + "pickup_window_days = VALUES(pickup_window_days), "
+                + "library_name = VALUES(library_name), "
+                + "library_description = VALUES(library_description)";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -97,7 +105,6 @@ public class LibraryConfigRepositoryMySQLImpl implements ILibraryConfigRepositor
         config.setMaxBorrowLimit(rs.getInt("max_borrow_limit"));
         config.setMaxReservationDaysAhead(rs.getInt("max_reservation_days_ahead"));
         config.setPickupWindowDays(rs.getInt("pickup_window_days"));
-        
         config.setLibraryName(rs.getString("library_name"));
         config.setLibraryDescription(rs.getString("library_description"));
         
