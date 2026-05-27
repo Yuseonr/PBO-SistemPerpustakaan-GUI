@@ -15,9 +15,9 @@ import java.sql.SQLException;
  */
 public class DatabaseConfig {
     // Konfigurasi koneksi database
-    private static final String URL      = "jdbc:mysql://localhost:3307/lib_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-    private static final String USER     = "root";
-    private static final String PASSWORD = "Tambahkan";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/lib_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
 
     // agar tidak di inisialisasi
     private DatabaseConfig() {}
