@@ -4,10 +4,14 @@
  */
 package com.library.ui.admin;
 
+import com.library.domain.entities.LibraryConfig;
+import javax.swing.JOptionPane;
+import com.library.service.ConfigService;
+import com.library.repository.LibraryConfigRepositoryMySQLImpl;
 import com.library.domain.entities.User;
 /**
  *
- * @author delli
+ * @author dell
  */
 public class Konfigurasi extends javax.swing.JFrame {
     
@@ -18,6 +22,10 @@ public class Konfigurasi extends javax.swing.JFrame {
      */
     public Konfigurasi(User user) {
         this.loggedInUser = user;
+        this.configService =
+            new ConfigService(
+                new LibraryConfigRepositoryMySQLImpl()
+            );
         initComponents();
     }
 
@@ -39,21 +47,21 @@ public class Konfigurasi extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        jSimpanKebijakan = new javax.swing.JButton();
+        jMaxBukuPerMember = new javax.swing.JTextField();
+        jPickupWindow = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        jMaksHariPinjam = new javax.swing.JTextField();
+        jMaksHariReservasi = new javax.swing.JTextField();
+        jDendaPerHari = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        jNamaPerpustakaan = new javax.swing.JTextField();
+        jDeskripsi = new javax.swing.JTextField();
+        jSimpanProfil = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         Role = new javax.swing.JLabel();
         jButtonDashboard = new javax.swing.JButton();
@@ -90,12 +98,21 @@ public class Konfigurasi extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabel14.setText("Maks buku per member:");
 
-        jButton1.setBackground(new java.awt.Color(204, 255, 204));
-        jButton1.setText("Simpan Kebijakan");
+        jSimpanKebijakan.setBackground(new java.awt.Color(204, 255, 204));
+        jSimpanKebijakan.setText("Simpan Kebijakan");
+        jSimpanKebijakan.addActionListener(this::jSimpanKebijakanActionPerformed);
+
+        jMaxBukuPerMember.addActionListener(this::jMaxBukuPerMemberActionPerformed);
+
+        jPickupWindow.addActionListener(this::jPickupWindowActionPerformed);
 
         jTextField5.setText("jTextField2");
 
-        jTextField8.addActionListener(this::jTextField8ActionPerformed);
+        jMaksHariPinjam.addActionListener(this::jMaksHariPinjamActionPerformed);
+
+        jMaksHariReservasi.addActionListener(this::jMaksHariReservasiActionPerformed);
+
+        jDendaPerHari.addActionListener(this::jDendaPerHariActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -107,31 +124,31 @@ public class Konfigurasi extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPickupWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jMaksHariPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jDendaPerHari, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(182, 182, 182)
                         .addComponent(jLabel4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jMaksHariReservasi, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jMaxBukuPerMember))
+                    .addComponent(jSimpanKebijakan, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(273, 273, 273))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
@@ -151,29 +168,29 @@ public class Konfigurasi extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel13)
-                                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(jDendaPerHari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
                                 .addComponent(jLabel4)))
                         .addGap(15, 15, 15)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jPickupWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jMaxBukuPerMember, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(3, 3, 3)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel10)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jMaksHariReservasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(8, 8, 8)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(jButton1)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                    .addComponent(jSimpanKebijakan)
+                    .addComponent(jMaksHariPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(28, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(69, 69, 69)
@@ -195,10 +212,13 @@ public class Konfigurasi extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N
         jLabel8.setText("Deskripsi                                   :");
 
-        jTextField2.addActionListener(this::jTextField2ActionPerformed);
+        jNamaPerpustakaan.addActionListener(this::jNamaPerpustakaanActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(204, 255, 204));
-        jButton3.setText("Simpan Profil");
+        jDeskripsi.addActionListener(this::jDeskripsiActionPerformed);
+
+        jSimpanProfil.setBackground(new java.awt.Color(204, 255, 204));
+        jSimpanProfil.setText("Simpan Profil");
+        jSimpanProfil.addActionListener(this::jSimpanProfilActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -214,13 +234,13 @@ public class Konfigurasi extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(jNamaPerpustakaan))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
-                            .addComponent(jTextField2))))
+                            .addComponent(jSimpanProfil, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                            .addComponent(jDeskripsi))))
                 .addContainerGap(489, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -231,7 +251,7 @@ public class Konfigurasi extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jNamaPerpustakaan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -239,11 +259,11 @@ public class Konfigurasi extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(196, Short.MAX_VALUE))
+                            .addComponent(jDeskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(198, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
+                        .addComponent(jSimpanProfil)
                         .addContainerGap())))
         );
 
@@ -350,13 +370,15 @@ public class Konfigurasi extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private ConfigService configService;
+    
+    private void jDeskripsiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeskripsiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_jDeskripsiActionPerformed
 
-    private void jTextField8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField8ActionPerformed
+    private void jDendaPerHariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDendaPerHariActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField8ActionPerformed
+    }//GEN-LAST:event_jDendaPerHariActionPerformed
 
     private void jButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDashboardActionPerformed
         new AdminDashboardForm(loggedInUser).setVisible(true);
@@ -377,6 +399,134 @@ public class Konfigurasi extends javax.swing.JFrame {
         new com.library.ui.auth.FormLogin().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButtonLogOutActionPerformed
+
+    private void jMaxBukuPerMemberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMaxBukuPerMemberActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMaxBukuPerMemberActionPerformed
+
+    private void jMaksHariReservasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMaksHariReservasiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMaksHariReservasiActionPerformed
+
+    private void jPickupWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPickupWindowActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPickupWindowActionPerformed
+
+    private void jMaksHariPinjamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMaksHariPinjamActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMaksHariPinjamActionPerformed
+
+    private void jNamaPerpustakaanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jNamaPerpustakaanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jNamaPerpustakaanActionPerformed
+
+    private void jSimpanProfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSimpanProfilActionPerformed
+        String namaPerpustakaan = jNamaPerpustakaan.getText();
+        String deskripsi = jDeskripsi.getText();
+
+        if (namaPerpustakaan.isEmpty() || deskripsi.isEmpty()) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Semua field harus diisi!"
+            );
+
+            return;
+        }
+
+        try { // tambahan
+
+            configService.updateLibraryProfile(
+                loggedInUser,
+                namaPerpustakaan,
+                deskripsi
+            );
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Profil perpustakaan berhasil disimpan!"
+            );
+
+        } catch (IllegalArgumentException e) { // tambahan
+
+            javax.swing.JOptionPane.showMessageDialog( // tambahan
+                this, // tambahan
+                e.getMessage(), // tambahan
+                "Validasi Gagal", // tambahan
+                javax.swing.JOptionPane.ERROR_MESSAGE // tambahan
+            ); // tambahan
+
+        } catch (SecurityException e) { // tambahan
+
+            javax.swing.JOptionPane.showMessageDialog( // tambahan
+                this, // tambahan
+                e.getMessage(), // tambahan
+                "Akses Ditolak", // tambahan
+                javax.swing.JOptionPane.ERROR_MESSAGE // tambahan
+            ); // tambahan
+        }
+    }//GEN-LAST:event_jSimpanProfilActionPerformed
+
+    private void jSimpanKebijakanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSimpanKebijakanActionPerformed
+        try {
+
+            double dendaPerHari =
+                Double.parseDouble(jDendaPerHari.getText());
+
+            int pickupWindow =
+                Integer.parseInt(jPickupWindow.getText());
+
+            int maksHariPinjam =
+                Integer.parseInt(jMaksHariPinjam.getText());
+
+            int maksHariReservasi =
+                Integer.parseInt(jMaksHariReservasi.getText());
+
+            int maksBukuPerMember =
+                Integer.parseInt(jMaxBukuPerMember.getText());
+
+            configService.updateLoanPolicy(
+                loggedInUser,
+                dendaPerHari,
+                pickupWindow,
+                maksHariPinjam,
+                maksHariReservasi,
+                maksBukuPerMember
+            );
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Kebijakan berhasil disimpan!"
+            );
+
+        } catch (NumberFormatException e) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Input harus berupa angka!",
+                "Error",
+                javax.swing.JOptionPane.ERROR_MESSAGE
+            );
+
+        } catch (IllegalArgumentException e) { // tambahan
+
+            javax.swing.JOptionPane.showMessageDialog( // tambahan
+                this, // tambahan
+                e.getMessage(), // tambahan
+                "Validasi Gagal", // tambahan
+                javax.swing.JOptionPane.ERROR_MESSAGE // tambahan
+            ); // tambahan
+
+        } catch (SecurityException e) { // tambahan
+
+            javax.swing.JOptionPane.showMessageDialog( // tambahan
+                this, // tambahan
+                e.getMessage(), // tambahan
+                "Akses Ditolak", // tambahan
+                javax.swing.JOptionPane.ERROR_MESSAGE // tambahan
+            ); // tambahan
+        }
+    }//GEN-LAST:event_jSimpanKebijakanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -405,12 +555,12 @@ public class Konfigurasi extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Role;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButtonAkun;
     private javax.swing.JButton jButtonDashboard;
     private javax.swing.JButton jButtonKonfigurasi;
     private javax.swing.JButton jButtonLogOut;
+    private javax.swing.JTextField jDendaPerHari;
+    private javax.swing.JTextField jDeskripsi;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -423,16 +573,16 @@ public class Konfigurasi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JTextField jMaksHariPinjam;
+    private javax.swing.JTextField jMaksHariReservasi;
+    private javax.swing.JTextField jMaxBukuPerMember;
+    private javax.swing.JTextField jNamaPerpustakaan;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jPickupWindow;
+    private javax.swing.JButton jSimpanKebijakan;
+    private javax.swing.JButton jSimpanProfil;
     private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables
 }
