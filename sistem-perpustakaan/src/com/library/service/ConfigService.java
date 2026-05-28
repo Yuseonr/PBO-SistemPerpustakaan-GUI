@@ -27,6 +27,42 @@ public class ConfigService {
     public LibraryConfig getLibraryConfig() {
         return configRepo.getConfig();
     }
+    
+    // update profil perpustakaan
+    public void updateLibraryProfile(
+        User actor,
+        String nama,
+        String deskripsi
+    ) {
+
+        LibraryConfig config = configRepo.getConfig();
+
+        config.setLibraryName(nama);
+        config.setLibraryDescription(deskripsi);
+
+        updateLibraryConfig(actor, config);
+    }
+
+    // update kebijakan peminjaman
+    public void updateLoanPolicy(
+        User actor,
+        double dendaPerHari,
+        int pickupWindow,
+        int maksHariPinjam,
+        int maksHariReservasi,
+        int maksBukuPerMember
+    ) {
+
+        LibraryConfig config = configRepo.getConfig();
+
+        config.setFinePerDay(dendaPerHari);
+        config.setPickupWindowDays(pickupWindow);
+        config.setMaxBorrowDays(maksHariPinjam);
+        config.setMaxReservationDaysAhead(maksHariReservasi);
+        config.setMaxBorrowLimit(maksBukuPerMember);
+
+        updateLibraryConfig(actor, config);
+    }
 
     // Method untuk memperbarui konfigurasi perpustakaan (hanya bisa dilakukan oleh admin)
     public void updateLibraryConfig(User actor, LibraryConfig newConfig) {
