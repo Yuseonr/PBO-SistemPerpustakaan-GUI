@@ -105,7 +105,7 @@ public class DashboardLibrarian extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No", "Kode Transaksi", "Member", "Judul Buku", "Status"
+                "ID", "Kode Transaksi", "Member", "Judul Buku", "Status"
             }
         ));
         jTableRiwayat.setPreferredSize(new java.awt.Dimension(900, 600));
