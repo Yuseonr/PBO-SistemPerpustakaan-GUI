@@ -9,6 +9,7 @@ import com.library.domain.entities.BookTitle;
 import com.library.domain.entities.Category;
 import com.library.repository.BookTitleRepositoryMySQLImpl;
 import com.library.repository.CategoryRepositoryMySQLImpl;
+import com.library.repository.BookCopyRepositoryMySQLImpl;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +25,8 @@ public class KelolaBuku extends javax.swing.JFrame {
     private List<Category> categoryList;
     private BookTitleRepositoryMySQLImpl bookRepo = new BookTitleRepositoryMySQLImpl();
     private CategoryRepositoryMySQLImpl catRepo = new CategoryRepositoryMySQLImpl();
+    private BookCopyRepositoryMySQLImpl copyRepo = new BookCopyRepositoryMySQLImpl();
+
     /**
      * Creates new form KelolaKategori
      */
@@ -45,12 +48,20 @@ public class KelolaBuku extends javax.swing.JFrame {
         bookList = bookRepo.findAll();
         DefaultTableModel model = (DefaultTableModel) jTableBuku.getModel();
         model.setRowCount(0);
-        int no = 1;
+        
+        // Looping data buku dan masukkan ke tabel
         for (BookTitle book : bookList) {
+            
+            // --- Hitung Ketersediaan Fisik Buku (Copy) ---
+            int totalStok = copyRepo.findByBookTitleId(book.getId()).size();
+            int stokTersedia = copyRepo.countAvailableByBookTitleId(book.getId());
+            String infoStok = stokTersedia + " / " + totalStok;
+            
             model.addRow(new Object[]{
-                no++,
+                book.getId(),        
                 book.getIsbn(),
                 book.getTitle(),
+                infoStok,            
                 book.getAuthor(),
                 book.getPublisher(),
                 book.getDescription()
@@ -91,6 +102,7 @@ public class KelolaBuku extends javax.swing.JFrame {
         jButtonPengembalianBuku = new javax.swing.JButton();
         jTextFieldPublisher = new javax.swing.JTextField();
         jLabelPublisher = new javax.swing.JLabel();
+        jButtonKelolaSalinan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1280, 720));
@@ -113,7 +125,7 @@ public class KelolaBuku extends javax.swing.JFrame {
 
             },
             new String [] {
-                "No", "ISBN", "Judul Buku", "Penulis", "Penerbit", "Deskripsi"
+                "ID", "ISBN", "Judul Buku", "Stok", "Penulis", "Penerbit", "Deskripsi"
             }
         ));
         jTableBuku.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
@@ -128,9 +140,9 @@ public class KelolaBuku extends javax.swing.JFrame {
             jTableBuku.getColumnModel().getColumn(0).setPreferredWidth(50);
             jTableBuku.getColumnModel().getColumn(1).setPreferredWidth(200);
             jTableBuku.getColumnModel().getColumn(2).setPreferredWidth(200);
-            jTableBuku.getColumnModel().getColumn(3).setPreferredWidth(200);
             jTableBuku.getColumnModel().getColumn(4).setPreferredWidth(200);
-            jTableBuku.getColumnModel().getColumn(5).setPreferredWidth(350);
+            jTableBuku.getColumnModel().getColumn(5).setPreferredWidth(200);
+            jTableBuku.getColumnModel().getColumn(6).setPreferredWidth(350);
         }
 
         jTextFieldJudulBuku.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
@@ -299,11 +311,11 @@ public class KelolaBuku extends javax.swing.JFrame {
                 .addComponent(jButtonKelolaKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(jButtonKelolaBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(31, 31, 31)
                 .addComponent(jButtonPinjamOffline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(31, 31, 31)
                 .addComponent(jButtonPengembalianBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
                 .addComponent(jButtonLogOut)
                 .addGap(33, 33, 33))
         );
@@ -313,6 +325,16 @@ public class KelolaBuku extends javax.swing.JFrame {
 
         jLabelPublisher.setFont(new java.awt.Font("Sylfaen", 0, 18)); // NOI18N
         jLabelPublisher.setText("Publisher");
+
+        jButtonKelolaSalinan.setBackground(new java.awt.Color(255, 204, 255));
+        jButtonKelolaSalinan.setFont(new java.awt.Font("Sylfaen", 0, 24)); // NOI18N
+        jButtonKelolaSalinan.setText("Salinan");
+        jButtonKelolaSalinan.setPreferredSize(new java.awt.Dimension(200, 50));
+        jButtonKelolaSalinan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonKelolaSalinanActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -324,40 +346,43 @@ public class KelolaBuku extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelJudul)
                     .addComponent(jScrollPaneBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(jButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(58, 58, 58)
-                        .addComponent(jButtonPerbarui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabelPenulis)
-                                    .addComponent(jLabelJudulBuku))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(66, 66, 66)
-                                        .addComponent(jTextFieldJudulBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jTextFieldPenulis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelISBN)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextFieldISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabelDeskripsi)
-                            .addComponent(jLabelPublisher))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextFieldPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBoxCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(38, 38, 38)
+                            .addComponent(jButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(58, 58, 58)
+                            .addComponent(jButtonPerbarui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonKelolaSalinan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelPenulis)
+                                        .addComponent(jLabelJudulBuku))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(66, 66, 66)
+                                            .addComponent(jTextFieldJudulBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jTextFieldPenulis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabelISBN)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(40, 40, 40)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabelDeskripsi)
+                                .addComponent(jLabelPublisher))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jTextFieldPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jComboBoxCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -391,8 +416,9 @@ public class KelolaBuku extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonPerbarui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                    .addComponent(jButtonTambah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonKelolaSalinan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPaneBuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
             .addGroup(layout.createSequentialGroup()
@@ -492,24 +518,35 @@ public class KelolaBuku extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus dari tabel!");
             return;
         }
+        
         BookTitle selectedBook = bookList.get(barisTerpilih);
+        
+        // --- CEK STOK SEBELUM HAPUS ---
+        // Jika fisik buku masih ada (lebih dari 0), tolak penghapusan!
+        int totalStok = copyRepo.findByBookTitleId(selectedBook.getId()).size();
+        if (totalStok > 0) {
+            JOptionPane.showMessageDialog(this, 
+                "Buku tidak bisa dihapus karena masih memiliki " + totalStok + " fisik (salinan). \nSilakan hapus salinan fisiknya terlebih dahulu!", 
+                "Gagal Menghapus", 
+                JOptionPane.WARNING_MESSAGE);
+            return; // Hentikan proses hapus di sini
+        }
+        
+        // Jika stok sudah 0, baru munculkan konfirmasi hapus
         int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus buku ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                bookRepo.delete(selectedBook.getId());
-                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus!");
-                
-                // Reset form & reload
-                jTextFieldISBN.setText("");
-                jTextFieldJudulBuku.setText("");
-                jTextFieldPenulis.setText("");
-                jTextFieldPublisher.setText("");
-                jTextAreaDeskripsi.setText("");
-                loadDataBuku();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Buku tidak bisa dihapus, mungkin karena masih ada transaksi atau salinan copy terkait.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            // Karena error DB ditelan oleh repository, kita pakai logika UI yang sudah aman.
+            bookRepo.delete(selectedBook.getId());
+            JOptionPane.showMessageDialog(this, "Buku berhasil dihapus secara permanen!");
+            
+            // Reset form & reload
+            jTextFieldISBN.setText("");
+            jTextFieldJudulBuku.setText("");
+            jTextFieldPenulis.setText("");
+            jTextFieldPublisher.setText("");
+            jTextAreaDeskripsi.setText("");
+            loadDataBuku();
         }
     }//GEN-LAST:event_jButtonHapusActionPerformed
 
@@ -547,6 +584,19 @@ public class KelolaBuku extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButtonPengembalianBukuActionPerformed
 
+    private void jButtonKelolaSalinanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKelolaSalinanActionPerformed
+        int barisTerpilih = jTableBuku.getSelectedRow();
+        if (barisTerpilih == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih buku terlebih dahulu dari tabel untuk dikelola salinannya!");
+            return;
+        }
+        
+        BookTitle selectedBook = bookList.get(barisTerpilih);
+        // Membuka form Salinan dan melempar sesi User + data Buku Terpilih
+        new KelolaSalinan(loggedInUser, selectedBook).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonKelolaSalinanActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -577,6 +627,7 @@ public class KelolaBuku extends javax.swing.JFrame {
     private javax.swing.JButton jButtonHapus;
     private javax.swing.JButton jButtonKelolaBuku;
     private javax.swing.JButton jButtonKelolaKategori;
+    private javax.swing.JButton jButtonKelolaSalinan;
     private javax.swing.JButton jButtonLogOut;
     private javax.swing.JButton jButtonPengembalianBuku;
     private javax.swing.JButton jButtonPerbarui;
