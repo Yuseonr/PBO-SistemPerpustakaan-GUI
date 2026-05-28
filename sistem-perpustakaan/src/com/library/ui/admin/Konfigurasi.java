@@ -27,8 +27,25 @@ public class Konfigurasi extends javax.swing.JFrame {
                 new LibraryConfigRepositoryMySQLImpl()
             );
         initComponents();
+        loadDataKonfigurasi(); 
     }
-
+    private void loadDataKonfigurasi() {
+        // Ambil data konfigurasi saat ini dari database
+        LibraryConfig config = configService.getLibraryConfig();
+        
+        if (config != null) {
+            // Isi form Profil Perpustakaan
+            jNamaPerpustakaan.setText(config.getLibraryName());
+            jDeskripsi.setText(config.getLibraryDescription());
+            
+            // Isi form Kebijakan (Ubah tipe angka menjadi teks String)
+            jDendaPerHari.setText(String.valueOf(config.getFinePerDay()));
+            jPickupWindow.setText(String.valueOf(config.getPickupWindowDays()));
+            jMaksHariPinjam.setText(String.valueOf(config.getMaxBorrowDays()));
+            jMaksHariReservasi.setText(String.valueOf(config.getMaxReservationDaysAhead()));
+            jMaxBukuPerMember.setText(String.valueOf(config.getMaxBorrowLimit()));
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,6 +87,8 @@ public class Konfigurasi extends javax.swing.JFrame {
         jButtonLogOut = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(1280, 720));
+        setResizable(false);
 
         jLabel3.setFont(new java.awt.Font("Sylfaen", 1, 36)); // NOI18N
         jLabel3.setText("Konfigurasi Perpustakaan");
@@ -190,7 +209,7 @@ public class Konfigurasi extends javax.swing.JFrame {
                     .addComponent(jLabel12)
                     .addComponent(jSimpanKebijakan)
                     .addComponent(jMaksHariPinjam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel2Layout.createSequentialGroup()
                     .addGap(69, 69, 69)
@@ -260,7 +279,7 @@ public class Konfigurasi extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
                             .addComponent(jDeskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(198, Short.MAX_VALUE))
+                        .addContainerGap(196, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jSimpanProfil)
