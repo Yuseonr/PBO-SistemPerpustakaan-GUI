@@ -84,7 +84,6 @@ public class ManajemenAkun extends javax.swing.JFrame {
                 lib.getId(), 
                 lib.getName(), 
                 lib.getEmail(), 
-                "-", 
                 status 
             });
         }
@@ -288,7 +287,7 @@ public class ManajemenAkun extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID Pegawai", "Nama", "E-mail", "No. HP", "Status"
+                "ID Pegawai", "Nama", "E-mail", "Status"
             }
         ));
         jTableLibrarian.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
@@ -298,7 +297,6 @@ public class ManajemenAkun extends javax.swing.JFrame {
             jTableLibrarian.getColumnModel().getColumn(1).setPreferredWidth(300);
             jTableLibrarian.getColumnModel().getColumn(2).setPreferredWidth(350);
             jTableLibrarian.getColumnModel().getColumn(3).setPreferredWidth(200);
-            jTableLibrarian.getColumnModel().getColumn(4).setPreferredWidth(200);
         }
 
         jLabel1.setFont(new java.awt.Font("Sylfaen", 0, 14)); // NOI18N

@@ -197,7 +197,7 @@ public class UserRepositoryMySQLImpl implements IUserRepository {
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE active = true";
+        String sql = "SELECT * FROM users";
 
         try (Connection conn = DatabaseConfig.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
